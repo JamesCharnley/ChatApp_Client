@@ -1,0 +1,85 @@
+<html>
+<head>
+    <script>
+        function ShowMessage(message) {
+            document.getElementById('message').innerHTML = message;
+        }
+        function AddMessage(message) {
+            var message_box = document.getElementById('message');
+            var new_para = document.createElement('p');
+            new_para.innerHTML = message;
+            message_box.appendChild(new_para);
+        }
+        function Login(username, password) {
+            CPPLogin("login", username, password);
+        }
+        function Signup(username, password) {
+            CPPLogin("signup", username, password);
+        }
+        function CPPLogin(command, username, password) {
+
+        }
+    </script>
+    <style type="text/css">
+        
+
+        body {
+            background: #f3f5f7;
+            color: #878a8d;
+            font-family: -apple-system, 'Segoe UI', Ubuntu, 'Open Sans', Arial, sans-serif;
+        }
+
+        #divider {
+            z-index: 100;
+            position: fixed;
+            width: 12px;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.01));
+        }
+
+        h3 {
+            margin-left: 10px;
+            margin-top: 32px;
+        }
+
+        #message {
+            font-weight: 600;
+            margin: 0;
+            width: 14em;
+            height: 1.6em;
+            border-left: 6px solid #44ddd5;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+            padding: 2em;
+            box-shadow: 0 30px 35px -20px #e1e2e5;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: top 0.15s ease-out, box-shadow 0.15s ease-out;
+        }
+
+            #message:hover {
+                top: 49%;
+                box-shadow: 0 35px 35px -20px #d3d5d9;
+            }
+    </style>
+</head>
+<body>
+    <div id="divider"></div>
+    <div id="contents">
+        <h3>Dashboard</h3>
+        <div id="message">
+            Welcome to the Dashboard!
+        </div>
+    </div>
+    <input type="text" value="username..." name="inputUsername" id="inputUsername">
+    <input type="text" value="password..." name="inputPassword" id="inputPassword">
+    <button id="login" onclick="Login(document.getElementById('inputUsername').value, document.getElementById('inputPassword').value);">Login</button>
+    <button id="signup" onclick="Signup(document.getElementById('inputUsername').value, document.getElementById('inputPassword').value);">Signup</button>
+    
+</body>
+</html>

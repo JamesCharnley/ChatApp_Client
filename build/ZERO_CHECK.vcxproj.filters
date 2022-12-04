@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\build\CMakeFiles\10f6c5a3c113ddcdf3bc0ec71345be04\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{ADF45CA9-9576-3845-BD31-E51C93D43152}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

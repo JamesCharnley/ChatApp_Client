@@ -1,0 +1,100 @@
+<html>
+<head>
+    <script>
+        
+        function SelectedRoom(element) {
+            var name = element.name;
+            ChangeRoom(name);
+        }
+    </script>
+    <style type="text/css">
+        
+
+        body {
+            background: #f3f5f7;
+            color: #878a8d;
+            font-family: -apple-system, 'Segoe UI', Ubuntu, 'Open Sans', Arial, sans-serif;
+        }
+
+        #divider {
+            z-index: 100;
+            position: fixed;
+            width: 12px;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.01));
+        }
+
+        h3 {
+            margin-left: 10px;
+            margin-top: 32px;
+        }
+
+        #message {
+            font-weight: 600;
+            margin: 0;
+            width: 14em;
+            height: 1.6em;
+            border-left: 6px solid #44ddd5;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+            padding: 2em;
+            box-shadow: 0 30px 35px -20px #e1e2e5;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: top 0.15s ease-out, box-shadow 0.15s ease-out;
+        }
+
+            #message:hover {
+                top: 49%;
+                box-shadow: 0 35px 35px -20px #d3d5d9;
+            }
+        .grid {
+            width: 95%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 20px;
+            row-gap: 20px;
+        }
+        #contacts_box{
+            border-style:solid;
+            border-color:black;
+
+            display:grid;
+            grid-template-columns: 1fr;
+            
+        }
+        #rooms_box {
+            border-style: solid;
+            border-color: black;
+
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+        .room_button{
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="divider"></div>
+    <div id="contents">
+        <h3>Dashboard</h3>
+        <div class="grid">
+            <div id="rooms_box">
+                <button class="room_button" name="Public Lounge" onclick="SelectedRoom(this)">Public Lounge</button>
+            </div>
+            <div id="contacts_box">
+                <h3>hello</h3>
+                <h3>hello</h3>
+                <h3>hello</h3>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

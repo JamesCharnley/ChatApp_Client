@@ -1,0 +1,13 @@
+﻿  Client.cpp
+..\src\Client.cpp(20,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+..\src\Client.cpp(27,56): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+..\src\Client.cpp(106,61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Connection.cpp
+..\src\Connection.cpp(193,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+..\src\Connection.cpp(200,61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+..\src\Connection.cpp(267,31): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Net_Socket.cpp
+..\src\Net_Socket.cpp(38,20): warning C4244: '=': conversion from 'SOCKET' to 'int', possible loss of data
+  PacketDecoder.cpp
+  Generating Code...
+  MyApp.vcxproj -> C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\build\Debug\MyApp.exe

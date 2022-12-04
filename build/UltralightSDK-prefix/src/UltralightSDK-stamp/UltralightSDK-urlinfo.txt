@@ -1,0 +1,12 @@
+# This is a generated file and its contents are an internal implementation detail.
+# The download step will be re-executed if anything in this file changes.
+# No other meaning or use of this file is supported.
+
+method=url
+command=C:/Program Files/CMake/bin/cmake.exe;-P;C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/UltralightSDK-prefix/src/UltralightSDK-stamp/download-UltralightSDK.cmake;COMMAND;C:/Program Files/CMake/bin/cmake.exe;-P;C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/UltralightSDK-prefix/src/UltralightSDK-stamp/verify-UltralightSDK.cmake;COMMAND;C:/Program Files/CMake/bin/cmake.exe;-P;C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/UltralightSDK-prefix/src/UltralightSDK-stamp/extract-UltralightSDK.cmake
+source_dir=C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/SDK
+work_dir=C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build
+url(s)=https://ultralight-sdk.sfo2.cdn.digitaloceanspaces.com/ultralight-sdk-latest-win-x64.7z
+hash=
+no_extract=
+
