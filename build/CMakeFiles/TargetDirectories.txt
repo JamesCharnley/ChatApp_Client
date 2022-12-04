@@ -1,4 +1,4 @@
-C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/CMakeFiles/UltralightSDK.dir
-C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/CMakeFiles/MyApp.dir
-C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/James/Documents/GitHub/ChatApp_Client/build/CMakeFiles/UltralightSDK.dir
+C:/Users/James/Documents/GitHub/ChatApp_Client/build/CMakeFiles/MyApp.dir
+C:/Users/James/Documents/GitHub/ChatApp_Client/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/James/Documents/GitHub/ChatApp_Client/build/CMakeFiles/ZERO_CHECK.dir

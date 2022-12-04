@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\src\MyApp.cpp">
+    <ClCompile Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\src\main.cpp">
+    <ClCompile Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Client.cpp">
@@ -13,21 +13,21 @@
     <ClCompile Include="..\src\Connection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Net_Socket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\PacketDecoder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\HTML_View.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\HTML_View_Sidepanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Net_Socket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PacketDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\src\MyApp.h">
+    <ClInclude Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Client.h">
@@ -36,28 +36,28 @@
     <ClInclude Include="..\src\Connection.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Net_Socket.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\PacketDecoder.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\HTML_View.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\HTML_View_Sidepanel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Net_Socket.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PacketDecoder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\James\Documents\GitHub\Ultralight_Chat\ultralight-quick-start\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\James\Documents\GitHub\ChatApp_Client\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{96A54295-77CD-3007-865D-C29D2DD57535}</UniqueIdentifier>
+      <UniqueIdentifier>{9D8ACB86-35B5-3EA5-962D-6F6AB7F76DB1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{6EAAB1DA-C0A5-3C59-B032-101BC73E03F1}</UniqueIdentifier>
+      <UniqueIdentifier>{12F44AEA-6771-3A9A-9CBF-46AAE4435DC1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

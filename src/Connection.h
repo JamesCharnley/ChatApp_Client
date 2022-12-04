@@ -12,6 +12,7 @@
 #include <iostream>
 #define BUFFER_SIZE 100
 
+//user struct
 struct User
 {
 public:

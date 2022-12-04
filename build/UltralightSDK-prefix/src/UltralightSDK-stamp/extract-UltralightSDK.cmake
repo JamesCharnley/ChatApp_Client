@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.5)
 
 # Make file names absolute:
 #
-get_filename_component(filename "C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/UltralightSDK-prefix/src/ultralight-sdk-latest-win-x64.7z" ABSOLUTE)
-get_filename_component(directory "C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/SDK" ABSOLUTE)
+get_filename_component(filename "C:/Users/James/Documents/GitHub/ChatApp_Client/build/UltralightSDK-prefix/src/ultralight-sdk-latest-win-x64.7z" ABSOLUTE)
+get_filename_component(directory "C:/Users/James/Documents/GitHub/ChatApp_Client/build/SDK" ABSOLUTE)
 
 message(STATUS "extracting...
      src='${filename}'

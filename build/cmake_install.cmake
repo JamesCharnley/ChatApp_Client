@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start
+# Install script for directory: C:/Users/James/Documents/GitHub/ChatApp_Client
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/MyApp")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/MyApp")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/James/Documents/GitHub/Ultralight_Chat/ultralight-quick-start/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/James/Documents/GitHub/ChatApp_Client/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
