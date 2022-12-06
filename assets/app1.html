@@ -5,13 +5,17 @@
             document.getElementById('message').innerHTML = message;
         }
         function AddMessage(message) {
-            var message_box = document.getElementById('scroll');
+            var message_box = document.getElementById('chat');
             var new_para = document.createElement('h6');
             new_para.innerHTML = message;
             message_box.appendChild(new_para);
         }
         function OnButtonClick(_input) {
 
+        }
+        function updateScroll() {
+            var element = document.getElementById('scroll');
+            element.scrollTop = element.scrollHeight;
         }
         // Get the input field
         var input = document.getElementById("input");
@@ -77,54 +81,60 @@
             }
 
         #scroll {
-            display: flex;
-            flex-direction: column-reverse;
-            width: 50%;
-            height: 100%;
             overflow-x: hidden;
             overflow-y: auto;
+            display: flex;
+            
+            width: 100%;
+            height: 90%;
             text-align: left;
-            padding: 20px;
+            
+        }
+        #input-section{
+            height:10%;
         }
     </style>
 </head>
 <body>
     <div id="divider"></div>
     <div id="scroll">
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
-        <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+        <div id="chat">
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+            <h6>fweweerfweffwefwefewfwefewfewfweefwf</h6>
+        </div>
+        
     </div>
-    
-    <input type="text" value="Hello" name="input" id="input">
-    <button id="submit" onclick="OnButtonClick(document.getElementById('input').value);">Click Me</button>
-    <div id="result"></div>
+    <div id="input-section">
+        <input type="text" value="Hello" name="input" id="input">
+        <button id="submit" onclick="OnButtonClick(document.getElementById('input').value);">Click Me</button>
+    </div>
 </body>
 </html>

@@ -512,6 +512,7 @@ void MyApp::CheckQueue()
                             ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Function String:"));
                             ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, functionString);
                             caller->EvaluateScript(functionString);
+                            caller->EvaluateScript("updateScroll()");
                         }
                     }
                 }

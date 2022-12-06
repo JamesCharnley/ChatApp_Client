@@ -141,6 +141,7 @@ void Client::ProcessPacket(std::string _packet, int _packet_length)
     case ECommand::Signup:
         break;
     case ECommand::Post:
+        Post(com_packet);
         break;
     case ECommand::Get:
         break;
