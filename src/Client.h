@@ -25,6 +25,8 @@ protected:
 
 	void Login(FCommand_Packet _packet);
 
+	void Post(FCommand_Packet _packet);
+
 	USHORT ServerPort;
 	const char* ServerAddress;
 	sockaddr_in receiverAddr;

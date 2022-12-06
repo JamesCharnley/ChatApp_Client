@@ -123,6 +123,7 @@ void MyApp::OnUpdate() {
         FString_Packet p = { ECommand::Authorized, username };
         UserLoggedIn(p);
     }
+    CheckQueue();
 }
 
 void MyApp::OnClose(ultralight::Window* window) {
@@ -470,11 +471,7 @@ void MyApp::UpdateElement(std::string _message)
 {
     std::unique_lock<std::mutex>lock(Message_Queue_Mutex);
     queue.push_back(_message);
-    for (int i = 0; i < queue.size(); i++)
-    {
-        ultralight::String t(queue[i].c_str());
-        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, t);
-    }
+    
     
 }
 

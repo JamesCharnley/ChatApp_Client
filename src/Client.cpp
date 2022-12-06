@@ -158,3 +158,8 @@ void Client::Login(FCommand_Packet _packet)
     main->username = p._string;
     main->b_UserLoggedIn = true;
 }
+
+void Client::Post(FCommand_Packet _packet)
+{
+    main->UpdateElement(_packet.Content);
+}
