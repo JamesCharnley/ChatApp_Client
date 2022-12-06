@@ -70,6 +70,8 @@ public:
   bool b_UserLoggedIn = false;
   std::string username = "";
 
+  void ChangeRoom_CPP(std::string _room);
+
 protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;

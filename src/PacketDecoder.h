@@ -11,7 +11,8 @@ enum class ECommand
 	Signup,
 	Post,
 	Get,
-	Authorized
+	Authorized,
+	GetRoom
 };
 
 struct FCommand_Packet

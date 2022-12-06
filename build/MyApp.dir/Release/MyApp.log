@@ -1,12 +1,2 @@
-﻿  Client.cpp
-  Connection.cpp
-..\src\Connection.cpp(193,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-..\src\Connection.cpp(200,61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-..\src\Connection.cpp(267,31): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  HTML_View.cpp
-  HTML_View_Sidepanel.cpp
-  Net_Socket.cpp
-..\src\Net_Socket.cpp(38,20): warning C4244: '=': conversion from 'SOCKET' to 'int', possible loss of data
-  PacketDecoder.cpp
-  Generating Code...
+﻿  MyApp.cpp
   MyApp.vcxproj -> C:\Users\James\Documents\GitHub\ChatApp_Client\build\Release\MyApp.exe

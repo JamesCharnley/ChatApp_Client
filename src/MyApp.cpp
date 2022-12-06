@@ -5,8 +5,11 @@
 #define WINDOW_HEIGHT 700
 
 Client* global_client = nullptr;
+MyApp* global_MyApp = nullptr;
 
 MyApp::MyApp() {
+
+    global_MyApp = this;
   ///
   /// Create our main App instance.
   ///
@@ -163,6 +166,47 @@ void MyApp::OnFinishLoading(ultralight::View* caller,
   ///
   /// This is called when a frame finishes loading on the page.
   ///
+}
+
+// This callback will be bound to 'ChangeRoom()' on the HTML page.
+JSValueRef ChangeRoom(JSContextRef ctx, JSObjectRef function,
+    JSObjectRef thisObject, size_t argumentCount,
+    const JSValueRef arguments[], JSValueRef* exception) {
+
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom() called"));
+
+    std::string* strs = new std::string[argumentCount];
+
+    for (int i = 0; i < argumentCount; i++)
+    {
+        JSType argType = JSValueGetType(ctx, arguments[i]);
+        if (argType == JSType::kJSTypeString)
+        {
+            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
+            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
+            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
+            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
+            //ultralight::String str(stringBuffer.get(), length);
+            std::string str(stringBuffer.get());
+            strs[i] = str;
+
+        }
+    }
+    
+    std::string packaged = "";
+    for (int i = 0; i < argumentCount; i++)
+    {
+        packaged += strs[i];
+        if (i < argumentCount - 1)
+        {
+            packaged += ";";
+        }
+    }
+    global_MyApp->ChangeRoom_CPP(packaged);
+
+    delete[] strs;
+
+    return JSValueMakeNull(ctx);
 }
 
 // This callback will be bound to 'CPPLogin()' on the page.
@@ -337,6 +381,8 @@ void MyApp::OnDOMReady(ultralight::View* caller,
 
         // Release the JavaScript String we created earlier.
         JSStringRelease(name);
+
+
     }
     if (caller == login_panel->view())
     {
@@ -368,6 +414,32 @@ void MyApp::OnDOMReady(ultralight::View* caller,
     {
         side_panel_view.DOMLoaded = true;
         side_panel_view.Update();
+    }
+
+    if (caller == dashboard_panel->view())
+    {
+        ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
+        // Get the underlying JSContextRef for use with the
+        // JavaScriptCore C API.
+        JSContextRef ctx = context->ctx();
+
+        // Create a JavaScript String containing the name of our callback.
+        JSStringRef name = JSStringCreateWithUTF8CString("ChangeRoom");
+
+        // Create a garbage-collected JavaScript function that is bound to our
+        // native C callback 'OnButtonClick()'.
+        JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
+            ChangeRoom);
+
+        // Get the global JavaScript object (aka 'window')
+        JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
+
+        // Store our function in the page's global JavaScript object so that it
+        // accessible from the page as 'OnButtonClick()'.
+        JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+
+        // Release the JavaScript String we created earlier.
+        JSStringRelease(name);
     }
    
     ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("DOMREADY END"));
@@ -470,6 +542,25 @@ void MyApp::UserLoggedIn(FString_Packet _packet)
     if (dashboard_panel->is_hidden())
     {
         dashboard_panel->Show();
+    }
+}
+
+void MyApp::ChangeRoom_CPP(std::string _room)
+{
+    int com = (int)ECommand::GetRoom;
+    std::string com_string = std::to_string(com);
+
+    std::string packetString = com_string + ";" + _room;
+
+    clientNetworking->SendMessageToServer(packetString);
+
+    if (!dashboard_panel->is_hidden())
+    {
+        dashboard_panel->Hide();
+    }
+    if (room_panel->is_hidden())
+    {
+        room_panel->Show();
     }
 }
 
