@@ -211,6 +211,39 @@ JSValueRef ChangeRoom(JSContextRef ctx, JSObjectRef function,
 }
 
 // This callback will be bound to 'CPPLogin()' on the page.
+JSValueRef CPPSignup(JSContextRef ctx, JSObjectRef function,
+    JSObjectRef thisObject, size_t argumentCount,
+    const JSValueRef arguments[], JSValueRef* exception) {
+
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPSignup() called"));
+
+    std::string* strs = new std::string[3];
+
+    for (int i = 0; i < argumentCount; i++)
+    {
+        JSType argType = JSValueGetType(ctx, arguments[i]);
+        if (argType == JSType::kJSTypeString)
+        {
+            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
+            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
+            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
+            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
+            //ultralight::String str(stringBuffer.get(), length);
+            std::string str(stringBuffer.get());
+            strs[i] = str;
+
+        }
+    }
+    strs[0] = "2";
+    std::string packaged = strs[0] + ";" + strs[1] + ";" + strs[2];
+    global_client->SendMessageToServer(packaged);
+
+    delete[] strs;
+
+    return JSValueMakeNull(ctx);
+}
+
+// This callback will be bound to 'CPPLogin()' on the page.
 JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
     JSObjectRef thisObject, size_t argumentCount,
     const JSValueRef arguments[], JSValueRef* exception) {
@@ -395,10 +428,16 @@ void MyApp::OnDOMReady(ultralight::View* caller,
         // Create a JavaScript String containing the name of our callback.
         JSStringRef name = JSStringCreateWithUTF8CString("CPPLogin");
 
+        // Create a JavaScript String containing the name of our callback.
+        JSStringRef name_signup = JSStringCreateWithUTF8CString("CPPSignup");
+
         // Create a garbage-collected JavaScript function that is bound to our
         // native C callback 'OnButtonClick()'.
         JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
             CPPLogin);
+
+        JSObjectRef func_signup = JSObjectMakeFunctionWithCallback(ctx, name,
+            CPPSignup);
 
         // Get the global JavaScript object (aka 'window')
         JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
@@ -406,9 +445,14 @@ void MyApp::OnDOMReady(ultralight::View* caller,
         // Store our function in the page's global JavaScript object so that it
         // accessible from the page as 'OnButtonClick()'.
         JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+        
+        
+        JSObjectSetProperty(ctx, globalObj, name_signup, func_signup, 0, 0);
 
         // Release the JavaScript String we created earlier.
         JSStringRelease(name);
+        
+        JSStringRelease(name_signup);
     }
 
     if (caller == side_panel->view())
@@ -545,10 +589,14 @@ void MyApp::UserLoggedIn(FString_Packet _packet)
 
 void MyApp::ChangeRoom_CPP(std::string _room)
 {
-    int com = (int)ECommand::GetRoom;
+
+    int com = (int)ECommand::Get;
     std::string com_string = std::to_string(com);
 
-    std::string packetString = com_string + ";" + _room;
+    int sub_com = (int)ESub_Command::Room;
+    std::string sub_com_string = std::to_string(sub_com);
+
+    std::string packetString = com_string + ";" + sub_com_string + ";" + _room;
 
     clientNetworking->SendMessageToServer(packetString);
 
