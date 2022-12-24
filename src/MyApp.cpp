@@ -276,50 +276,32 @@ JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
     return JSValueMakeNull(ctx);
 }
 
-// This callback will be bound to 'OnButtonClick()' on the page.
-JSValueRef OnButtonClick(JSContextRef ctx, JSObjectRef function,
+JSValueRef CPPSubmitMessage(JSContextRef ctx, JSObjectRef function,
     JSObjectRef thisObject, size_t argumentCount,
     const JSValueRef arguments[], JSValueRef* exception) {
 
-    const char* str =
-        "document.getElementById('result').innerText = 'Ultralight rocks!'";
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("OnButtonClick"));
-    // Create our string of JavaScript
-    JSStringRef script = JSStringCreateWithUTF8CString(str);
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPSubmitMessage"));
 
-    // Execute it with JSEvaluateScript, ignoring other parameters for now
-    JSEvaluateScript(ctx, script, 0, 0, 0, 0);
+    std::string message = "";
 
-    // Release our string (we only Release what we Create)
-    JSStringRelease(script);
-
-    if (argumentCount > 0)
+    for (int i = 0; i < argumentCount; i++)
     {
-        //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "argument count > 1");
-        JSType argType = JSValueGetType(ctx, arguments[0]);
+        JSType argType = JSValueGetType(ctx, arguments[i]);
         if (argType == JSType::kJSTypeString)
         {
-            //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/defaut/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "argument type == string");
-            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[0], NULL);
+            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
             size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
             std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
             JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
-            ultralight::String str(stringBuffer.get(), length);
-            ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, str);
-        }
-        else if (argType == JSType::kJSTypeNull)
-        {
-            //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "argument type == null");
-        }
-        else if (argType == JSType::kJSTypeUndefined)
-        {
-            //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "argument type == undefined");
-        }
-        else
-        {
-            //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "argument type unknown");
+            //ultralight::String str(stringBuffer.get(), length);
+            std::string str(stringBuffer.get());
+            message = str;
+
         }
     }
+    
+    std::string packaged = "3;4;Public Lounge;" + message;
+    global_client->SendMessageToServer(packaged);
 
     return JSValueMakeNull(ctx);
 }
@@ -399,12 +381,12 @@ void MyApp::OnDOMReady(ultralight::View* caller,
         JSContextRef ctx = context->ctx();
 
         // Create a JavaScript String containing the name of our callback.
-        JSStringRef name = JSStringCreateWithUTF8CString("OnButtonClick");
+        JSStringRef name = JSStringCreateWithUTF8CString("CPPSubmitMessage");
 
         // Create a garbage-collected JavaScript function that is bound to our
         // native C callback 'OnButtonClick()'.
         JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
-            OnButtonClick);
+            CPPSubmitMessage);
 
         // Get the global JavaScript object (aka 'window')
         JSObjectRef globalObj = JSContextGetGlobalObject(ctx);

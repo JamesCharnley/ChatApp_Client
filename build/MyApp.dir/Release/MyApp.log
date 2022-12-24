@@ -1,2 +1,8 @@
-﻿  MyApp.cpp
+﻿  Client.cpp
+  HTML_View_Sidepanel.cpp
+  PacketDecoder.cpp
+..\src\PacketDecoder.cpp(124,71): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  MyApp.cpp
+  main.cpp
+  Generating Code...
   MyApp.vcxproj -> C:\Users\James\Documents\GitHub\ChatApp_Client\build\Release\MyApp.exe
