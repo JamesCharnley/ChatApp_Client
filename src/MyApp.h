@@ -11,6 +11,7 @@
 #include "HTML_View_Sidepanel.h"
 #include "PacketDecoder.h"
 #include "Client.h"
+#include "Room.h"
 
 using namespace ultralight;
 
@@ -57,7 +58,7 @@ public:
   virtual void OnChangeTitle(ultralight::View* caller,
     const String& title) override;
 
-  void UpdateElement(std::string _message);
+  void Post_Room_Meassage(FPost_Message_Packet _packet);
   void CheckQueue();
   Client* clientNetworking;
 
@@ -72,6 +73,21 @@ public:
 
   void ChangeRoom_CPP(std::string _room);
 
+  void AddRoom(FPost_Room_Packet _packet);
+
+  View* get_db() { return dashboard_panel->view().get(); };
+
+  bool b_addroom = false;
+  void post_room(FPost_Room_Packet _packet);
+  std::mutex post_room_mutex;
+  std::vector<FPost_Room_Packet> post_rooms = std::vector<FPost_Room_Packet>();
+
+  bool active_room_exists(int _room_id);
+
+  Room* get_active_room(int _id);
+
+  Room* get_current_room() { return current_active_room; };
+
 protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;
@@ -85,9 +101,19 @@ protected:
 
   std::vector<ultralight::View*> callers = std::vector< ultralight::View*>();
 
+  std::vector<Room*> active_rooms = std::vector<Room*>();
+
+  void activate_room(int _id, std::string _name);
+
   FUser user;
   //JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
   //    JSObjectRef thisObject, size_t argumentCount,
   //    const JSValueRef arguments[], JSValueRef* exception);
+
+  Room* current_active_room = nullptr;
+
+  bool b_new_message = false;
+
+  void add_message_room(std::string _message);
 
 };

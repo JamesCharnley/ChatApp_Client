@@ -141,7 +141,7 @@ void Client::ProcessPacket(std::string _packet, int _packet_length)
     case ECommand::Signup:
         break;
     case ECommand::Post:
-        Post(com_packet);
+        Post_Request(PacketDecoder::Command_Packet_To_Get_Post_Packet(com_packet));
         break;
     case ECommand::Get:
         break;
@@ -160,7 +160,37 @@ void Client::Login(FCommand_Packet _packet)
     main->b_UserLoggedIn = true;
 }
 
-void Client::Post(FCommand_Packet _packet)
+void Client::Post_Request(FGet_Post_Packet _packet)
 {
-    main->UpdateElement(_packet.Content);
+
+    if (_packet.Sub_Command == ESub_Command::InValid)
+    {
+        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Post Request invalid"));
+        return;
+    }
+
+    switch (_packet.Sub_Command)
+    {
+    case ESub_Command::InValid:
+        break;
+    case ESub_Command::Room:
+        Post_Request_Room(PacketDecoder::Get_Post_Packet_To_Post_Room_Packet(_packet));
+        break;
+    case ESub_Command::RoomList:
+        break;
+    case ESub_Command::Contacts:
+        break;
+    case ESub_Command::Message:
+        main->Post_Room_Meassage(PacketDecoder::Get_Post_Packet_To_Post_Message_Packet(_packet));
+        break;
+    default:
+        break;
+    }
+    
+}
+
+void Client::Post_Request_Room(FPost_Room_Packet _packet)
+{
+    //main->AddRoom(_packet, main->get_db());
+    main->post_room(_packet);
 }

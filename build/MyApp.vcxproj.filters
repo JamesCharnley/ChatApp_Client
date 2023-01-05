@@ -25,6 +25,9 @@
     <ClCompile Include="..\src\PacketDecoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Room.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.h">
@@ -46,6 +49,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PacketDecoder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Room.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

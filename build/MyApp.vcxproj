@@ -447,6 +447,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\src\HTML_View_Sidepanel.h" />
     <ClInclude Include="..\src\Net_Socket.h" />
     <ClInclude Include="..\src\PacketDecoder.h" />
+    <ClInclude Include="..\src\Room.h" />
     <ClInclude Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.h" />
     <ClCompile Include="..\src\Client.cpp" />
     <ClCompile Include="..\src\Connection.cpp" />
@@ -454,6 +455,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\HTML_View_Sidepanel.cpp" />
     <ClCompile Include="..\src\Net_Socket.cpp" />
     <ClCompile Include="..\src\PacketDecoder.cpp" />
+    <ClCompile Include="..\src\Room.cpp" />
     <ClCompile Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.cpp" />
     <ClCompile Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\main.cpp" />
   </ItemGroup>

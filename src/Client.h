@@ -25,7 +25,8 @@ protected:
 
 	void Login(FCommand_Packet _packet);
 
-	void Post(FCommand_Packet _packet);
+	void Post_Request(FGet_Post_Packet _packet);
+	void Post_Request_Room(FPost_Room_Packet _packet);
 
 	USHORT ServerPort;
 	const char* ServerAddress;

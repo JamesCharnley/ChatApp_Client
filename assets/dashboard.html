@@ -3,9 +3,24 @@
     <script>
         
         function SelectedRoom(element) {
-            var name = element.name;
-            ChangeRoom(name);
+            var room_id = element.id;
+            ChangeRoom(room_id);
         }
+        function AddRoomButton(id, room) {
+            var roomsbox = document.getElementById("rooms_box");
+            var button = document.createElement('button');
+            button.id = id;
+            button.name = room;
+            button.className = 'room_button';
+            button.onclick = function () {
+                SelectedRoom(button);
+            };
+            var text = document.createTextNode(room);
+            button.appendChild(text);
+            roomsbox.appendChild(button);
+            
+        }
+        
     </script>
     <style type="text/css">
         
@@ -72,9 +87,9 @@
         #rooms_box {
             border-style: solid;
             border-color: black;
-
             display: grid;
             grid-template-columns: 1fr;
+            overflow-y: auto;
         }
         .room_button{
             height:30px;
@@ -87,7 +102,8 @@
         <h3>Dashboard</h3>
         <div class="grid">
             <div id="rooms_box">
-                <button class="room_button" name="Public Lounge" onclick="SelectedRoom(this)">Public Lounge</button>
+                
+                
             </div>
             <div id="contacts_box">
                 <h3>hello</h3>

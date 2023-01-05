@@ -135,10 +135,93 @@ FGet_Post_Packet PacketDecoder::Command_Packet_To_Get_Post_Packet(FCommand_Packe
     return packet;
 }
 
-std::string PacketDecoder::Get_Packet_To_String(FGet_Post_Packet _get_packet)
+std::string PacketDecoder::Get_Post_Packet_To_String(FGet_Post_Packet _get_packet)
 {
     std::string com_string = std::to_string((int)_get_packet.Command);
     std::string sub_com_string = std::to_string((int)_get_packet.Sub_Command);
     std::string packet_string = com_string + ";" + sub_com_string + ";" + _get_packet.Content;
+    return packet_string;
+}
+
+FPost_Message_Packet PacketDecoder::Get_Post_Packet_To_Post_Message_Packet(FGet_Post_Packet _get_post_packet)
+{
+
+    int room_id_length = 0;
+    bool inValid = true;
+    for (int i = 0; i < _get_post_packet.Content.length(); i++)
+    {
+        if (_get_post_packet.Content[i] == ';')
+        {
+            inValid = false;
+            break;
+        }
+        room_id_length++;
+    }
+    if (inValid)
+    {
+        FPost_Message_Packet inv_pack = { ECommand::InValid, ESub_Command::InValid, 0, "" };
+        return inv_pack;
+    }
+
+    int room_id = std::stoi(_get_post_packet.Content.substr(0, room_id_length));
+    std::string content = _get_post_packet.Content.substr(room_id_length + 1, _get_post_packet.Content.length() - room_id_length + 1);
+
+    FPost_Message_Packet packet = { _get_post_packet.Command, _get_post_packet.Sub_Command, room_id, content };
+
+    return packet;
+}
+
+std::string PacketDecoder::Post_Message_Packet_To_String(FPost_Message_Packet _post_message_Packet)
+{
+    int com_int = (int)_post_message_Packet.Command;
+    std::string com_string = std::to_string(com_int);
+
+    int sub_com_int = (int)_post_message_Packet.Sub_Command;
+    std::string sub_com_string = std::to_string(sub_com_int);
+
+    std::string packet_string = com_string + ";" + sub_com_string + ";" + std::to_string(_post_message_Packet.Room_ID) + ";" + _post_message_Packet.Content;
+    return packet_string;
+}
+
+FPost_Room_Packet PacketDecoder::Get_Post_Packet_To_Post_Room_Packet(FGet_Post_Packet _get_post_packet)
+{
+    // 0;0;id;name
+
+    int id_length = 0;
+    for (int i = 0; i < _get_post_packet.Content.length(); i++)
+    {
+        if (_get_post_packet.Content[i] == ';')
+        {
+            break;
+        }
+        id_length++;
+    }
+
+    if (_get_post_packet.Content.length() <= id_length + 1)
+    {
+        // invalid packet
+    }
+
+    std::string id_string = _get_post_packet.Content.substr(0, id_length);
+    int id_int = std::stoi(id_string);
+
+    std::string name_string = _get_post_packet.Content.substr(id_length + 1, _get_post_packet.Content.length() - (id_length + 1));
+
+    FPost_Room_Packet packet = { _get_post_packet.Command, _get_post_packet.Sub_Command, id_int, name_string };
+    return packet;
+}
+
+std::string PacketDecoder::Post_Room_Packet_To_String(FPost_Room_Packet _post_room_packet)
+{
+    int com_int = (int)_post_room_packet.Command;
+    std::string com_string = std::to_string(com_int);
+
+    int sub_com_int = (int)_post_room_packet.Sub_Command;
+    std::string sub_com_string = std::to_string(sub_com_int);
+
+    std::string room_id_string = std::to_string(_post_room_packet.Room_ID);
+
+    std::string packet_string = com_string + ";" + sub_com_string + ";" + room_id_string + ";" + _post_room_packet.Room_Name;
+
     return packet_string;
 }

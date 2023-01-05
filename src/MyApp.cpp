@@ -87,7 +87,7 @@ MyApp::MyApp() {
   USHORT LocalPort = 8000;
   USHORT ServerPort = 8080;
   char add[20];
-  std::string str = "192.168.1.107";
+  std::string str = "192.168.11.13";
   for (int i = 0; i < str.length(); i++)
   {
       add[i] = str[i];
@@ -117,13 +117,25 @@ void MyApp::OnUpdate() {
   ///
   /// 
     //CheckQueue();
+
+    if (b_addroom)
+    {
+        FPost_Room_Packet p;
+        AddRoom(p);
+    }
     if (b_UserLoggedIn)
     {
         b_UserLoggedIn = false;
         FString_Packet p = { ECommand::Authorized, username };
         UserLoggedIn(p);
     }
-    CheckQueue();
+    if (b_new_message)
+    {
+        CheckQueue();
+    }
+    
+
+
 }
 
 void MyApp::OnClose(ultralight::Window* window) {
@@ -273,6 +285,9 @@ JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
 
     delete[] strs;
 
+    FString_Packet p = { ECommand::Authorized, "james" };
+    global_MyApp->UserLoggedIn(p);
+
     return JSValueMakeNull(ctx);
 }
 
@@ -299,9 +314,17 @@ JSValueRef CPPSubmitMessage(JSContextRef ctx, JSObjectRef function,
 
         }
     }
+    if (global_MyApp->get_current_room() != nullptr)
+    {
+        FPost_Message_Packet packet = { ECommand::Post, ESub_Command::Message, global_MyApp->get_current_room()->Get_ID(), message };
+
+        std::string packet_string = PacketDecoder::Post_Message_Packet_To_String(packet);
+
+        global_client->SendMessageToServer(packet_string);
+    }
     
-    std::string packaged = "3;4;Public Lounge;" + message;
-    global_client->SendMessageToServer(packaged);
+    
+    
 
     return JSValueMakeNull(ctx);
 }
@@ -492,13 +515,12 @@ void MyApp::OnChangeTitle(ultralight::View* caller,
   window_->SetTitle(title.utf8().data());
 }
 
-std::vector<std::string> queue = std::vector<std::string>();
-void MyApp::UpdateElement(std::string _message)
+std::vector<FPost_Message_Packet> queue = std::vector<FPost_Message_Packet>();
+void MyApp::Post_Room_Meassage(FPost_Message_Packet _packet)
 {
     std::unique_lock<std::mutex>lock(Message_Queue_Mutex);
-    queue.push_back(_message);
-    
-    
+    queue.push_back(_packet);
+    b_new_message = true;
 }
 
 void MyApp::CheckQueue()
@@ -506,50 +528,32 @@ void MyApp::CheckQueue()
     std::lock_guard<std::mutex>lock(Message_Queue_Mutex);
     if (queue.size() > 0)
     {
-        std::string i2s = std::to_string(queue.size());
-        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "Queue size:");
-        const char* ss = i2s.c_str();
-        ultralight::String us(ss);
-        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, us);
-        for (int j = 0; j < queue.size(); j++)
+        for (std::vector<FPost_Message_Packet>::iterator it = queue.begin(); it < queue.end(); it++)
         {
-            std::vector<std::string>::iterator iter = queue.begin() + j;
-            if (iter != queue.end())
+            FPost_Message_Packet packet = *it;
+            if (active_room_exists(packet.Room_ID))
             {
-                std::string msgs = *iter;
-                ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "Message in queue:");
-                ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, msgs.c_str());
-                for (int i = 0; i < callers.size(); i++)
+                Room* room = get_active_room(packet.Room_ID);
+                if (room)
                 {
-                    std::vector<ultralight::View*>::iterator it = callers.begin() + i;
-                    if (it != callers.end())
+                    room->add_message(packet.Content);
+
+                    if (current_active_room)
                     {
-                        ultralight::View* caller = *it;
-                        if (caller != nullptr)
+                        if (current_active_room->Get_ID() == room->Get_ID())
                         {
-                            ultralight::String functionString = "";
-                            ultralight::String funcStart = "AddMessage('";
-                            ultralight::String funcParam(msgs.c_str());
-                            ultralight::String funcEnd = "')";
-                            
-                            functionString += funcStart;
-                            functionString += funcParam;
-                            functionString += funcEnd;
-                            ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Function String:"));
-                            ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, functionString);
-                            caller->EvaluateScript(functionString);
-                            caller->EvaluateScript("updateScroll()");
+                            add_message_room(packet.Content);
                         }
                     }
                 }
             }
-            
         }
+        
         queue.clear();
 
     }
     //Message_Queue_cv.notify_one();
-    
+    b_new_message = false;
 }
 
 void MyApp::UserLoggedIn(FString_Packet _packet)
@@ -571,16 +575,27 @@ void MyApp::UserLoggedIn(FString_Packet _packet)
 
 void MyApp::ChangeRoom_CPP(std::string _room)
 {
+   //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom_CPP"));
+   //int com = (int)ECommand::Get;
+   //std::string com_string = std::to_string(com);
+   //
+   //int sub_com = (int)ESub_Command::Room;
+   //std::string sub_com_string = std::to_string(sub_com);
+   //
+   //std::string packetString = com_string + ";" + sub_com_string + ";" + _room;
+   //
+   //clientNetworking->SendMessageToServer(packetString);
 
-    int com = (int)ECommand::Get;
-    std::string com_string = std::to_string(com);
+    Room* room = get_active_room(std::stoi(_room));
+    if (room)
+    {
+        current_active_room = room;
 
-    int sub_com = (int)ESub_Command::Room;
-    std::string sub_com_string = std::to_string(sub_com);
-
-    std::string packetString = com_string + ";" + sub_com_string + ";" + _room;
-
-    clientNetworking->SendMessageToServer(packetString);
+        for (std::vector<std::string>::iterator it = current_active_room->messages.begin(); it < current_active_room->messages.end(); it++)
+        {
+            add_message_room(*it);
+        }
+    }
 
     if (!dashboard_panel->is_hidden())
     {
@@ -589,6 +604,103 @@ void MyApp::ChangeRoom_CPP(std::string _room)
     if (room_panel->is_hidden())
     {
         room_panel->Show();
+    }
+}
+
+void MyApp::AddRoom(FPost_Room_Packet _packet)
+{
+    std::lock_guard<std::mutex>lock(post_room_mutex);
+
+    for (std::vector<FPost_Room_Packet>::iterator it = post_rooms.begin(); it != post_rooms.end(); it++)
+    {
+        _packet = *it;
+
+        activate_room(_packet.Room_ID, _packet.Room_Name);
+
+        ultralight::String id_string(std::to_string(_packet.Room_ID).c_str());
+        ultralight::String room_string(_packet.Room_Name.c_str());
+        ultralight::String func_start = "AddRoomButton('";
+        ultralight::String func_params = id_string + "', '" + room_string + "'";
+        ultralight::String func_end = ")";
+
+        ultralight::String func_string = func_start + func_params + func_end;
+
+        dashboard_panel->view().get()->EvaluateScript(func_string);
+        dashboard_panel->view().get()->set_needs_paint(true);
+    }
+
+    post_rooms.clear();
+    b_addroom = false;
+    
+}
+
+void MyApp::post_room(FPost_Room_Packet _packet)
+{
+    std::lock_guard<std::mutex>lock(post_room_mutex);
+    post_rooms.push_back(_packet);
+    b_addroom = true;
+}
+
+bool MyApp::active_room_exists(int _room_id)
+{
+    for (std::vector<Room*>::iterator it = active_rooms.begin(); it < active_rooms.end(); it++)
+    {
+        Room* room = *it;
+        if (room->Get_ID() == _room_id)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+Room* MyApp::get_active_room(int _id)
+{
+    for (std::vector<Room*>::iterator it = active_rooms.begin(); it < active_rooms.end(); it++)
+    {
+        Room* room = *it;
+        if (room->Get_ID() == _id)
+        {
+            return *it;
+        }
+    }
+    return nullptr;
+}
+
+void MyApp::activate_room(int _id, std::string _name)
+{
+    if (active_room_exists(_id)) { return; }
+    Room* new_room = new Room(_id, _name);
+    active_rooms.push_back(new_room);
+}
+
+void MyApp::add_message_room(std::string _message)
+{
+    std::string msgs = _message;
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "Message in queue:");
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, msgs.c_str());
+    for (int i = 0; i < callers.size(); i++)
+    {
+        std::vector<ultralight::View*>::iterator it = callers.begin() + i;
+        if (it != callers.end())
+        {
+            ultralight::View* caller = *it;
+            if (caller != nullptr)
+            {
+                ultralight::String functionString = "";
+                ultralight::String funcStart = "AddMessage('";
+                ultralight::String funcParam(msgs.c_str());
+                ultralight::String funcEnd = "')";
+
+                functionString += funcStart;
+                functionString += funcParam;
+                functionString += funcEnd;
+                ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Function String:"));
+                ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, functionString);
+                caller->EvaluateScript(functionString);
+                caller->EvaluateScript("updateScroll()");
+            }
+        }
     }
 }
 

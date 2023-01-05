@@ -188,7 +188,27 @@ void Connection::HandleConnection_send(int _socket)
         MessageQueue.pop();
         // unlock messagequeue
         lock.unlock();
-
+        //
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        //
+        // 
+        // 
+        //  
+        // 
+        // 
+        // 
+        // 
+        // 
         // convert string to char
         int len = message.length();
         for (int i = 0; i < len; i++)
@@ -260,6 +280,7 @@ void Connection::PushMessage(std::string _message)
     std::lock_guard<std::mutex>lock(Queue_Mutex);
     MessageQueue.push(_message);
     Queue_cv.notify_one();
+
 }
 
 std::string Connection::CapitalizeString(std::string _string)

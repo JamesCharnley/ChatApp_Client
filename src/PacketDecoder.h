@@ -57,7 +57,27 @@ public:
 
 };
 
+struct FPost_Message_Packet
+{
+public:
 
+	ECommand Command;
+	ESub_Command Sub_Command;
+	int Room_ID;
+	std::string Content;
+
+};
+
+
+struct FPost_Room_Packet
+{
+public:
+
+	ECommand Command;
+	ESub_Command Sub_Command;
+	int Room_ID;
+	std::string Room_Name;
+};
 
 class PacketDecoder
 {
@@ -70,5 +90,10 @@ public:
 	static FString_Packet Command_Packet_To_String_Packet(FCommand_Packet _com_packet);
 	static std::string String_Packet_To_String(FString_Packet _string_packet);
 	static FGet_Post_Packet Command_Packet_To_Get_Post_Packet(FCommand_Packet _com_packet);
-	static std::string Get_Packet_To_String(FGet_Post_Packet _get_packet);
+	static std::string Get_Post_Packet_To_String(FGet_Post_Packet _get_packet);
+	static FPost_Message_Packet Get_Post_Packet_To_Post_Message_Packet(FGet_Post_Packet _get_post_packet);
+	static std::string Post_Message_Packet_To_String(FPost_Message_Packet __post_message_Packet);
+	static FPost_Room_Packet Get_Post_Packet_To_Post_Room_Packet(FGet_Post_Packet _get_post_packet);
+	static std::string Post_Room_Packet_To_String(FPost_Room_Packet _post_room_packet);
 };
+
