@@ -9,9 +9,11 @@ class Room
 
 public:
 
-	Room();
+	Room();     
 
-	Room(int _id, std::string _name);
+
+	Room(int _id, std::string _name, class MyApp* _main, class Client* _client);         
+	  
 
 	std::string GetName();
 	int Get_ID() { return id; };
@@ -30,7 +32,10 @@ private:
 
 	std::vector<std::string> members = std::vector<std::string>();
 
-	
+	MyApp* main = nullptr;
+	Client* client = nullptr;
+
+	void get_all_messages();
 
 };
 

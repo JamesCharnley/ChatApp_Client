@@ -4,17 +4,23 @@
 //#include <string.h>
 #include <cstdint>
 #include <filesystem>
-
+#include "MyApp.h"
+#include "Client.h"
+#include "PacketDecoder.h"
 Room::Room()
 {
 	
 }
 
-Room::Room(int _id, std::string _name)
+Room::Room(int _id, std::string _name, MyApp* _main, Client* _client)
 {
+	main = _main;
+	client = _client;
 	id = _id;
 	name = _name;
 	isInitialized = true;
+
+	get_all_messages();
 }
 
 std::string Room::GetName()
@@ -27,24 +33,11 @@ void Room::add_message(std::string _message)
 	messages.push_back(_message);
 }
 
-//
-//void Room::RemoveActiveUser(Connection& _userConnection)
-//{
-//	std::vector<Connection&>::iterator it;
-//	for (int i = 0; i < activeUsers.size(); i++)
-//	{
-//		it = activeUsers.begin() + i;
-//		Connection& con = *it;
-//
-//		if (_userConnection.GetUsername() == con.GetUsername())
-//		{
-//			activeUsers.erase(it);
-//			return;
-//		}
-//	}
-//}
-//
-//void Room::NewMessage(std::string _message)
-//{
-//}
+void Room::get_all_messages()
+{
+	FGet_Post_Packet packet = { ECommand::Get, ESub_Command::Room, std::to_string(id) };
+	client->SendMessageToServer(PacketDecoder::Get_Post_Packet_To_String(packet));
+}
+
+
 

@@ -73,6 +73,8 @@ public:
 
   void ChangeRoom_CPP(std::string _room);
 
+  void create_room_cpp(std::string _name);
+
   void AddRoom(FPost_Room_Packet _packet);
 
   View* get_db() { return dashboard_panel->view().get(); };
@@ -88,6 +90,11 @@ public:
 
   Room* get_current_room() { return current_active_room; };
 
+  void open_dashboard();
+
+  void clear_current_room();
+
+  void open_create_room_panel();
 protected:
   RefPtr<App> app_;
   RefPtr<Window> window_;
@@ -96,6 +103,7 @@ protected:
   RefPtr<Overlay> room_panel;
   RefPtr<Overlay> login_panel;
   RefPtr<Overlay> dashboard_panel;
+  RefPtr<Overlay> create_room_panel;
 
   bool isAuthenticated = false;
 

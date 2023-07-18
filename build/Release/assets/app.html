@@ -1,17 +1,23 @@
 <html>
 <head>
     <script>
+        function open_dashboard() {
+            CPPOpenDashboard();
+        }
         function SetUsername(_username) {
             document.getElementById('username').innerHTML = _username;
         }
+        function open_create_room_panel() {
+            
+        }
     </script>
     <style type="text/css">
-        * {
-            -webkit-user-select: none;
-        }
 
+        title {
+            background: #101010;
+        }
         body {
-            background: white;
+            background: #363636;
             color: #7e7f8e;
             fill: #7e7f8e;
             font-family: -apple-system, 'Segoe UI', Ubuntu, Arial, sans-serif;
@@ -141,9 +147,9 @@
     </svg>
     <h3>Sidebar</h3>
     <ul>
-        <li class="active"><svg width="16" height="16"><use xlink:href="#dashboard" /></svg>Dashboard</li>
+        <li class="active" onclick="open_dashboard();"><svg width="16" height="16"><use xlink:href="#dashboard" /></svg>Dashboard</li>
         <li class="disabled"><svg width="16" height="16"><use xlink:href="#profile" /></svg>Profile</li>
-        <li class="disabled"><svg width="16" height="16"><use xlink:href="#favorites" /></svg>Favorites</li>
+        <li class="disabled" onclick="open_create_room_panel();"><svg width="16" height="16"><use xlink:href="#favorites" /></svg>+ Room</li>
     </ul>
     <h6 id="username">Logged in as: username</h6>
 </body>

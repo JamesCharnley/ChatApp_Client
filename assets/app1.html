@@ -21,6 +21,17 @@
 
         }
 
+        function ClearRoom() {
+
+            var message_box = document.getElementById('chat');
+            while (message_box.firstChild) {
+                message_box.removeChild(message_box.lastChild);
+            }
+
+            var new_para = document.createElement('h6');
+            new_para.innerHTML = "ClearRoom()";
+            message_box.appendChild(new_para);
+        }
 
         function updateScroll() {
             var element = document.getElementById('scroll');
@@ -44,9 +55,11 @@
     </script>
     <style type="text/css">
         
-
+        title {
+            background: #101010;
+        }
         body {
-            background: #f3f5f7;
+            background: #303030;
             color: #878a8d;
             font-family: -apple-system, 'Segoe UI', Ubuntu, 'Open Sans', Arial, sans-serif;
         }

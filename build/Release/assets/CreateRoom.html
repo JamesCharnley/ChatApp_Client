@@ -1,27 +1,13 @@
 <html>
 <head>
     <script>
-        function ShowMessage(message) {
-            document.getElementById('message').innerHTML = message;
+        function create_room(name) {
+            cpp_create_room(name);
         }
-        function AddMessage(message) {
-            var message_box = document.getElementById('message');
-            var new_para = document.createElement('p');
-            new_para.innerHTML = message;
-            message_box.appendChild(new_para);
-        }
-        function Login(username, password) {
-            CPPLogin("login", username, password);
-        }
-        function Signup(username, password) {
-            CPPSignup("signup", username, password);
-        }
-        function CPPLogin(command, username, password) {
+        function cpp_create_room(name) {
 
         }
-        function CPPSignup(command, username, password) {
 
-        }
     </script>
     <style type="text/css">
 
@@ -73,16 +59,9 @@
 </head>
 <body>
     <div id="divider"></div>
-    <div id="contents">
-        <h3>Dashboard</h3>
-        <div id="message">
-            Welcome to the Dashboard!
-        </div>
-    </div>
-    <input type="text" value="username..." name="inputUsername" id="inputUsername">
-    <input type="text" value="password..." name="inputPassword" id="inputPassword">
-    <button id="login" onclick="Login(document.getElementById('inputUsername').value, document.getElementById('inputPassword').value);">Login</button>
-    <button id="signup" onclick="Signup(document.getElementById('inputUsername').value, document.getElementById('inputPassword').value);">Signup</button>
+    
+    <input type="text" value="name..." name="inputUsername" id="room_name">
+    <button id="create" onclick="create_room(document.getElementById('room_name').value);">Create</button>
     
 </body>
 </html>
