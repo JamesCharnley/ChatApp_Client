@@ -334,8 +334,8 @@ JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
 
     delete[] strs;
 
-    FString_Packet p = { ECommand::Authorized, "james" };
-    global_MyApp->UserLoggedIn(p);
+    //FString_Packet p = { ECommand::Authorized, "james" };
+    //global_MyApp->UserLoggedIn(p);
 
     return JSValueMakeNull(ctx);
 }
@@ -803,6 +803,7 @@ Room* MyApp::get_active_room(int _id)
 
 void MyApp::open_dashboard()
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("open_dashboard()"));
     if (!login_panel->is_hidden())
     {
         login_panel->Hide();

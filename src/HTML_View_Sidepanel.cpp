@@ -19,6 +19,7 @@ void HTML_View_Sidepanel::Update()
 
 void HTML_View_Sidepanel::SetUsername(std::string _username)
 {
+	ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "SetUsername");
 	username = _username;
 
 	if (DOMLoaded == true)
@@ -34,10 +35,10 @@ void HTML_View_Sidepanel::SetUsername(std::string _username)
 
 void HTML_View_Sidepanel::UpdateUsername(std::string _username)
 {
-	
-	String ul_string(_username.c_str());
+	String ul_string (_username.c_str());
+	String log = "UpdateUsername(): " + String(_username.c_str());
 
-	ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, ul_string);
+	ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
 	
 	String funcString = "";
 	String funcStart = "SetUsername('";

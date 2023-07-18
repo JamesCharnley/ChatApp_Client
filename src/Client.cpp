@@ -4,6 +4,7 @@
 
 Client::Client(const char* _addressServer, USHORT _portServer, USHORT _portClient, MyApp* _main)
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Construct Client Connection"));
     main = _main;
     LocalPort = _portClient;
     ServerPort = _portServer;
@@ -27,11 +28,13 @@ void Client::SendMessageToServer(std::string _message)
     }
     buffer[length] = '\0';
     int status = send(Socket, buffer, (int)strlen(buffer), 0);
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, buffer);
+    String log = "SendMessageToServer: " + String(buffer);
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
 }
 
 void Client::Connect()
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Connect()"));
     // create address for server connection
     receiverAddr.sin_family = AF_INET;
     receiverAddr.sin_port = htons(ServerPort);
@@ -43,6 +46,8 @@ void Client::Connect()
     if (status == -1)
     {
         std::cout << "Error in connect(). Error code: " << WSAGetLastError() << "\n";
+        String error = "Error in connect(). Error code: " + WSAGetLastError();
+        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, error);
         return;
     }
 
@@ -56,7 +61,7 @@ void Client::Connect()
 
 void Client::HandleConnection_Recv(int _socket, sockaddr_in _address)
 {
-
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Create recv thread"));
     char buffer[BUFFER_SIZE];
 
     bool isActive = true;
@@ -74,8 +79,9 @@ void Client::HandleConnection_Recv(int _socket, sockaddr_in _address)
         }
         buffer[(size_t)status] = '\0';
 
-        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("recv :"));
-        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, buffer);
+        String log = "recv: " + String(buffer);
+        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
+   
         std::string msg(buffer);
         ProcessPacket(msg, (int)strlen(buffer));
 
@@ -89,7 +95,7 @@ void Client::HandleConnection_Recv(int _socket, sockaddr_in _address)
 
 void Client::HandleConnection_Send(int _socket, sockaddr_in _address)
 {
-
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Create send thread"));
     char buffer[BUFFER_SIZE];
 
     bool isActive = true;
@@ -110,6 +116,8 @@ void Client::HandleConnection_Send(int _socket, sockaddr_in _address)
         if (status == -1)
         {
             std::cout << "Error in send().Error code: " << WSAGetLastError();
+            String error = "Error in send(). Error code: " + WSAGetLastError();
+            ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, error);
             isActive = false;
             continue;
         }
@@ -117,6 +125,7 @@ void Client::HandleConnection_Send(int _socket, sockaddr_in _address)
         std::string message(buffer);
         if (message == "QUIT")
         {
+            ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Send: QUIT"));
             ClientShuttingDown = true;
             closesocket(Socket);
         }
@@ -130,6 +139,8 @@ void Client::HandleConnection_Send(int _socket, sockaddr_in _address)
 
 void Client::ProcessPacket(std::string _packet, int _packet_length)
 {
+    String log = "ProcessPacket(): " + String(_packet.c_str());
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
     FCommand_Packet com_packet = PacketDecoder::Char_To_Command_Packet(_packet, _packet_length);
 
     switch (com_packet.Command)
@@ -155,8 +166,12 @@ void Client::ProcessPacket(std::string _packet, int _packet_length)
 
 void Client::Login(FCommand_Packet _packet)
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Login()"));
     FString_Packet p = PacketDecoder::Command_Packet_To_String_Packet(_packet);
+    String log = "Set username to " + String(p._string.c_str());
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
     main->username = p._string;
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Set b_UserLoggedIn to true"));
     main->b_UserLoggedIn = true;
 }
 
