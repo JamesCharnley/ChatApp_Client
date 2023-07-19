@@ -10,6 +10,7 @@ Connection::Connection(Server* _server, int _clientSocket)
     std::thread recvThread(&Connection::HandleConnection_recv, this, ClientSocket);
     std::thread sendThread(&Connection::HandleConnection_send, this, ClientSocket);
 
+
     // detach threads and set their bools
     recvThread.detach();
     RecvThread_Active = true;

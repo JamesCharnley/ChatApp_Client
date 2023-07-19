@@ -30,6 +30,7 @@ std::string Room::GetName()
 
 void Room::add_message(std::string _message)
 {
+	ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Room::add_message()"));
 	messages.push_back(_message);
 }
 

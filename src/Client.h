@@ -13,6 +13,8 @@ public:
 
 	void SendMessageToServer(std::string _message);
 
+	void Tick();
+
 protected:
 
 	void Connect();
@@ -27,6 +29,9 @@ protected:
 
 	void Post_Request(FGet_Post_Packet _packet);
 	void Post_Request_Room(FPost_Room_Packet _packet);
+
+	void SendQueuedPacket();
+	std::mutex out_queue_mutex;
 
 	USHORT ServerPort;
 	const char* ServerAddress;

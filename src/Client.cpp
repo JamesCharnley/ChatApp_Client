@@ -5,6 +5,7 @@
 Client::Client(const char* _addressServer, USHORT _portServer, USHORT _portClient, MyApp* _main)
 {
     ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Construct Client Connection"));
+    reciever_ready = true;
     main = _main;
     LocalPort = _portClient;
     ServerPort = _portServer;
@@ -14,22 +15,55 @@ Client::Client(const char* _addressServer, USHORT _portServer, USHORT _portClien
     BindSocket();
     std::thread clientThread(&Client::Connect, this);
     clientThread.detach();
+
     //Connect();
     //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, "end of client constructor");
 }
 
 void Client::SendMessageToServer(std::string _message)
 {
-    size_t length = _message.length();
-    char* buffer = new char[length + (size_t)1];
-    for (int i = 0; i < (int)length; i++)
-    {
-        buffer[i] = _message[i];
-    }
-    buffer[length] = '\0';
-    int status = send(Socket, buffer, (int)strlen(buffer), 0);
-    String log = "SendMessageToServer: " + String(buffer);
+    std::lock_guard<std::mutex>lock(out_queue_mutex);
+    String log = "Queued Packet: " + String(_message.c_str());
     ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
+    out_queue.push_back(_message);
+}
+
+void Client::SendQueuedPacket()
+{
+    std::lock_guard<std::mutex>lock(out_queue_mutex);
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("SendQueuedPacket()"));
+    
+    if (out_queue.size() > 0)
+    {
+        std::string packet = *out_queue.begin();
+        out_queue.erase(out_queue.begin());
+        if (packet != "0")
+        {
+            reciever_ready = false;
+        }
+        size_t length = packet.length();
+        char* buffer = new char[length + (size_t)1];
+        for (int i = 0; i < (int)length; i++)
+        {
+            buffer[i] = packet[i];
+        }
+        buffer[length] = '\0';
+        int status = send(Socket, buffer, (int)strlen(buffer), 0);
+
+        String log = "SendQueuedPacket: " + String(buffer);
+        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
+    }
+}
+
+void Client::Tick()
+{
+    if (reciever_ready)
+    {
+        if (out_queue.size() > 0)
+        {
+            SendQueuedPacket();
+        }
+    }
 }
 
 void Client::Connect()
@@ -83,13 +117,34 @@ void Client::HandleConnection_Recv(int _socket, sockaddr_in _address)
         ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, log);
    
         std::string msg(buffer);
-        ProcessPacket(msg, (int)strlen(buffer));
+
+        if (msg == "0")
+        {
+            reciever_ready = true;
+        }
+        else
+        {
+            ProcessPacket(msg, (int)strlen(buffer));
+        }
 
         if (ClientShuttingDown)
         {
             isActive = false;
         }
 
+        if (msg != "0")
+        {
+            std::string packet = "0";
+            size_t length = packet.length();
+            char* buffer = new char[length + (size_t)1];
+            for (int i = 0; i < (int)length; i++)
+            {
+                buffer[i] = packet[i];
+            }
+            buffer[length] = '\0';
+            int status = send(Socket, buffer, (int)strlen(buffer), 0);
+        }
+        
     }
 }
 

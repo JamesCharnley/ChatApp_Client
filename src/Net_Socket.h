@@ -5,6 +5,7 @@
 #include <thread>
 #include <iostream>
 #include <AppCore/AppCore.h>
+#include <vector>
 
 #define BUFFER_SIZE 100
 
@@ -27,6 +28,8 @@ protected:
 	// address
 	sockaddr_in Address;
 
+	std::vector<std::string> out_queue = std::vector<std::string>();
+	bool reciever_ready;
 
 protected:
 

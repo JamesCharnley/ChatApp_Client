@@ -4,7 +4,8 @@
         
         function SelectedRoom(element) {
             var room_id = element.id;
-            ChangeRoom(room_id);
+            var room_name = element.name;
+            ChangeRoom(room_id, room_name);
         }
         function AddRoomButton(id, room) {
             var roomsbox = document.getElementById("rooms_box");

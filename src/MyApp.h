@@ -71,7 +71,7 @@ public:
   bool b_UserLoggedIn = false;
   std::string username = "";
 
-  void ChangeRoom_CPP(std::string _room);
+  void ChangeRoom_CPP(std::string _room_id, std::string _room_name);
 
   void create_room_cpp(std::string _name);
 

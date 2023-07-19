@@ -90,7 +90,7 @@ MyApp::MyApp() {
   USHORT LocalPort = 8000;
   USHORT ServerPort = 8080;
   char add[20];
-  std::string str = "192.168.1.25";
+  std::string str = "192.168.1.24";
   for (int i = 0; i < str.length(); i++)
   {
       add[i] = str[i];
@@ -137,7 +137,7 @@ void MyApp::OnUpdate() {
         CheckQueue();
     }
     
-
+    clientNetworking->Tick();
 
 }
 
@@ -212,17 +212,8 @@ JSValueRef ChangeRoom(JSContextRef ctx, JSObjectRef function,
 
         }
     }
-    
-    std::string packaged = "";
-    for (int i = 0; i < argumentCount; i++)
-    {
-        packaged += strs[i];
-        if (i < argumentCount - 1)
-        {
-            packaged += ";";
-        }
-    }
-    global_MyApp->ChangeRoom_CPP(packaged);
+
+    global_MyApp->ChangeRoom_CPP(strs[0], strs[1]);
 
     delete[] strs;
 
@@ -645,6 +636,7 @@ void MyApp::OnChangeTitle(ultralight::View* caller,
 std::vector<FPost_Message_Packet> queue = std::vector<FPost_Message_Packet>();
 void MyApp::Post_Room_Meassage(FPost_Message_Packet _packet)
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("Post_Room_Message()"));
     std::unique_lock<std::mutex>lock(Message_Queue_Mutex);
     queue.push_back(_packet);
     b_new_message = true;
@@ -652,6 +644,7 @@ void MyApp::Post_Room_Meassage(FPost_Message_Packet _packet)
 
 void MyApp::CheckQueue()
 {
+    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CheckQueue"));
     std::lock_guard<std::mutex>lock(Message_Queue_Mutex);
     if (queue.size() > 0)
     {
@@ -677,7 +670,7 @@ void MyApp::CheckQueue()
         }
         
         queue.clear();
-
+        ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CheckQueue(): clear queue"));
     }
     //Message_Queue_cv.notify_one();
     b_new_message = false;
@@ -693,7 +686,7 @@ void MyApp::UserLoggedIn(FString_Packet _packet)
     open_dashboard();
 }
 
-void MyApp::ChangeRoom_CPP(std::string _room)
+void MyApp::ChangeRoom_CPP(std::string _room_id, std::string _room_name)
 {
    //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom_CPP"));
    //int com = (int)ECommand::Get;
@@ -706,7 +699,7 @@ void MyApp::ChangeRoom_CPP(std::string _room)
    //
    //clientNetworking->SendMessageToServer(packetString);
 
-    Room* room = get_active_room(std::stoi(_room));
+    Room* room = get_active_room(std::stoi(_room_id));
     if (room)
     {
         if (current_active_room != nullptr)
@@ -721,7 +714,26 @@ void MyApp::ChangeRoom_CPP(std::string _room)
             add_message_room(*it);
         }
     }
+    else
+    {
+        int room_id = std::stoi(_room_id);
+        activate_room(room_id, _room_name);
+        room = get_active_room(std::stoi(_room_id));
+        if (room)
+        {
+            if (current_active_room != nullptr)
+            {
+                clear_current_room();
+            }
 
+            current_active_room = room;
+
+            for (std::vector<std::string>::iterator it = current_active_room->messages.begin(); it < current_active_room->messages.end(); it++)
+            {
+                add_message_room(*it);
+            }
+        }
+    }
     if (!dashboard_panel->is_hidden())
     {
         dashboard_panel->Hide();
@@ -749,7 +761,7 @@ void MyApp::AddRoom(FPost_Room_Packet _packet)
     {
         _packet = *it;
 
-        activate_room(_packet.Room_ID, _packet.Room_Name);
+        //activate_room(_packet.Room_ID, _packet.Room_Name);
 
         ultralight::String id_string(std::to_string(_packet.Room_ID).c_str());
         ultralight::String room_string(_packet.Room_Name.c_str());
