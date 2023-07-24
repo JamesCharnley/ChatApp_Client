@@ -105,6 +105,8 @@ protected:
   RefPtr<Overlay> dashboard_panel;
   RefPtr<Overlay> create_room_panel;
 
+  std::vector<HTML_View*> htmlViews = std::vector<HTML_View*>();
+
   bool isAuthenticated = false;
 
   std::vector<ultralight::View*> callers = std::vector< ultralight::View*>();

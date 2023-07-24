@@ -1,9 +1,39 @@
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
+
+///
+/// @file CAPI_Platform.h
+/// 
+/// Global platform singleton, manages user-defined platform handlers.
+///
+/// The library uses the Platform API for most platform-specific operations (eg, file access,
+/// clipboard, font loading, GPU access, etc.).
+///
+/// @par Overview of which platform handlers are required / optional / provided:
+///
+/// |                   | ulCreateRenderer() | ulCreateApp() |
+/// |-------------------|--------------------|---------------|
+/// | FileSystem        | **Required**       | *Provided*    |
+/// | FontLoader        | **Required**       | *Provided*    |
+/// | Clipboard         |  *Optional*        | *Provided*    |
+/// | GPUDriver         |  *Optional*        | *Provided*    |
+/// | Logger            |  *Optional*        | *Provided*    |
+/// | SurfaceDefinition |  *Provided*        | *Provided*    |
+///
+/// @note  This singleton should be set up before creating the Renderer or App.
+///
 #ifndef ULTRALIGHT_CAPI_PLATFORM_H
 #define ULTRALIGHT_CAPI_PLATFORM_H
 
 #include <Ultralight/CAPI/CAPI_Defines.h>
 #include <Ultralight/CAPI/CAPI_Logger.h>
 #include <Ultralight/CAPI/CAPI_FileSystem.h>
+#include <Ultralight/CAPI/CAPI_FontLoader.h>
 #include <Ultralight/CAPI/CAPI_Surface.h>
 #include <Ultralight/CAPI/CAPI_GPUDriver.h>
 #include <Ultralight/CAPI/CAPI_Clipboard.h>
@@ -33,11 +63,14 @@ ULExport void ulPlatformSetLogger(ULLogger logger);
 ///
 /// Set a custom FileSystem implementation.
 ///
-/// This is used for loading File URLs (eg, <file:///page.html>). If you don't call this, and are
-/// not using ulCreateApp() or ulEnablePlatformFileSystem(), you will not be able to load any File
-/// URLs.
+/// The library uses this to load all file URLs (eg, <file:///page.html>).
+///
+/// You can provide the library with your own FileSystem implementation so that file assets are
+/// loaded from your own pipeline.
 ///
 /// You should call this before ulCreateRenderer() or ulCreateApp().
+/// 
+/// @warning This is required to be defined before calling ulCreateRenderer()
 ///
 /// @note  ulCreateApp() will use the default platform file system if you never call this.
 ///
@@ -46,6 +79,27 @@ ULExport void ulPlatformSetLogger(ULLogger logger);
 ///        (@see <AppCore/CAPI.h>)
 ///
 ULExport void ulPlatformSetFileSystem(ULFileSystem file_system);
+
+///
+/// Set a custom FontLoader implementation.
+/// 
+/// The library uses this to load all system fonts.
+///
+/// Every operating system has its own library of installed system fonts. The FontLoader interface
+/// is used to lookup these fonts and fetch the actual font data (raw TTF/OTF file data) for a given
+/// given font description.
+/// 
+/// You should call this before ulCreateRenderer() or ulCreateApp().
+/// 
+/// @warning This is required to be defined before calling ulCreateRenderer()
+/// 
+/// @note  ulCreateApp() will use the default platform font loader if you never call this.
+///
+/// @note  If you're not using ulCreateApp(), (eg, using ulCreateRenderer()) you can still use the
+///        default platform font loader by calling ulEnablePlatformFontLoader()'
+///        (@see <AppCore/CAPI.h>)
+///
+ULExport void ulPlatformSetFontLoader(ULFontLoader font_loader);
 
 ///
 /// Set a custom Surface implementation.

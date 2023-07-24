@@ -1,16 +1,10 @@
-///
-/// @file Renderer.h
-///
-/// @brief The header for the Renderer class.
-///
-/// @author
-///
-/// This file is a part of Ultralight, a fast, lightweight, HTML UI engine
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 #include <Ultralight/Defines.h>
 #include <Ultralight/RefPtr.h>
@@ -21,44 +15,110 @@
 namespace ultralight {
 
 ///
-/// @brief  This singleton manages the lifetime of all Views (@see View) and coordinates
-///         painting, network requests, and event dispatch.
+/// Core renderer singleton for the library, coordinates all library functions.
+/// 
+/// The Renderer class is responsible for creating and painting \link View Views \endlink, managing
+/// \link Session Sessions \endlink, as well as coordinating network requests, events, JavaScript
+/// execution, and more.
+/// 
+/// ## Initializing the Renderer 
+/// To initialize the library, you should set up the Platform singleton and call Renderer::Create.
+/// 
+/// @par Example initialization code
+/// ```
+///   // Get the Platform singleton (maintains global library state)
+///   auto& platform = Platform::instance();
+/// 
+///   // Setup config
+///   Config my_config;
+///   platform.set_config(my_config);
+/// 
+///   // Create platform handlers (these are the minimum required)
+///   // (This is pseudo-code, you will need to define your own)
+///   MyFileSystem* file_system = new MyFileSystem();
+///   MyFontLoader* font_loader = new MyFontLoader();
+///   
+///   // Setup platform handlers
+///   platform.set_file_system(file_system);
+///   platform.set_font_loader(font_loader);
+/// 
+///   // Create the Renderer
+///   RefPtr<Renderer> renderer = Renderer::Create();
+/// 
+///   // Create Views here
+/// ```
+/// 
+/// ## Updating Renderer Logic
+/// 
+/// You should call Renderer::Update() from your main update loop as often as possible to give the
+/// library an opportunity to dispatch events and timers:
+/// 
+/// @par Example update code
+/// ```
+/// void mainLoop()
+/// {
+///   while(true)
+///   {  
+///     // Update program logic here
+///     renderer.Update();
+///   }
+/// }
+/// ```
+/// 
+/// ## Rendering Each Frame
+/// 
+/// When your program is ready to display a new frame (usually in synchrony with the monitor
+/// refresh rate), you should call Renderer::Render() so the library can render all active
+/// \link View Views \endlink as needed.
+/// 
+/// @par Example rendering code
+/// ```
+/// void displayFrame()
+/// {
+///     // Render all Views as needed
+///     renderer.Render();
+/// 
+///     // Each View will render to a
+///     //   - Pixel-Buffer Surface (View::surface())
+///     //     or
+///     //   - GPU texture (View::render_target())
+///     // based on whether CPU or GPU rendering is used.
+///     //
+///     // You will need to display the image data here as needed.
+///   }
+/// }
+/// ```
 ///
-/// @note  You don't have to create this instance directly if you use the AppCore API. The App
-///        class will automatically create a Renderer and perform all rendering within its run
-///        loop. @see App::Create
+/// @note The App class creates and manages its own Renderer (optional API in AppCore, available on
+///       desktop OS only).
+/// 
+/// @warning You should only create one Renderer during the lifetime of your program.
 ///
 class UExport Renderer : public RefCounted {
  public:
   ///
-  /// Create the Ultralight Renderer directly.
+  /// Create the core renderer singleton for the library.
   ///
-  /// Unlike App::Create(), this does not use any native windows for drawing and allows you to
-  /// manage your own runloop and painting. This method is recommended for those wishing to
-  /// integrate the library into a game.
+  /// You should set up the Platform singleton before calling this function.
+  /// 
+  /// @note You do not need to the call this if you're using the App class from AppCore.
   ///
-  /// You should set up your Platform config, file-system, font loader, surface-factories, and
-  /// gpu-drivers before calling this function. (@see <Ultralight/Platform.h>)
-  ///
-  /// At a minimum, you will need to define a FontLoader ahead of time or this call will fail. You
-  /// can use the platform's native FontLoader by calling:
-  /// <pre>
-  ///   /// This function is defined in <AppCore/Platform.h>
-  ///   Platform::instance().set_font_loader(GetPlatformFontLoader());
-  /// </pre>
-  ///
-  /// @note  You should only create one Renderer per application lifetime.
-  ///
-  /// @note: You should not call this if you are using App::Create(), it creates its own renderer
-  ///        and provides default implementations for various platform handlers automatically.
+  /// \parblock
+  /// @warning You'll need to define a FontLoader and FileSystem within the Platform singleton
+  ///         or else this call will fail.
+  /// \endparblock
+  /// 
+  /// \parblock
+  /// @warning You should only create one Renderer during the lifetime of your program.
+  /// \endparblock
   ///
   /// @return  Renderer is ref-counted. This method returns a ref-pointer to a new instance, you
-  ///          should store it in a RefPtr<> to keep the instance alive.
+  ///          should store it in a RefPtr to keep the instance alive.
   ///
   static RefPtr<Renderer> Create();
 
   ///
-  /// Create a Session to store local data in (such as cookies, local storage,
+  /// Create a unique, named Session to store browsing data in (cookies, local storage,
   /// application cache, indexed db, etc).
   ///
   /// @note  A default, persistent Session is already created for you. You only need to call this
@@ -80,13 +140,16 @@ class UExport Renderer : public RefCounted {
   virtual RefPtr<Session> default_session() = 0;
 
   ///
-  /// Create a new View.
+  /// Create a new View to load and display web pages in.
+  /// 
+  /// Views are similar to a tab in a browser. They have certain dimensions but are rendered to an
+  /// offscreen surface and must be forwarded all input events.
   ///
-  /// @param  width   The initial width, in pixels.
+  /// @param  width    The initial width, in pixels.
   ///
-  /// @param  height  The initial height, in pixels.
+  /// @param  height   The initial height, in pixels.
   ///
-  /// @param  config  Configuration details for the View.
+  /// @param  config   Configuration details for the View.
   ///
   /// @param  session  The session to store local data in. Pass a nullptr to use the default
   ///                  session.
@@ -98,39 +161,54 @@ class UExport Renderer : public RefCounted {
       = 0;
 
   ///
-  /// Update timers and dispatch internal callbacks. You should call this often
-  /// from your main application loop.
+  /// Update timers and dispatch callbacks.
+  /// 
+  /// You should call this as often as you can from your application's run loop.
   ///
   virtual void Update() = 0;
 
   ///
-  /// Render all active views to their respective render-targets/surfaces.
+  /// Render all active views to their respective surfaces and render targets.
   ///
-  /// You should call this once per frame (usually in synchrony with the
-  /// monitor's refresh rate).
+  /// You should call this once per frame (usually in synchrony with the monitor's refresh rate).
   ///
-  /// @note  Views are only repainted if they actually need painting.
+  /// @note  Views are only rendered if they actually need rendering.
   ///
   virtual void Render() = 0;
 
+  ///
+  /// Render a subset of views to their respective surfaces and render targets.
+  /// 
+  /// @param  view_array  A C-array containing a list of View pointers.
+  /// 
+  /// @param  view_array_len  The length of the C-array.
+  /// 
   virtual void RenderOnly(View** view_array, size_t view_array_len) = 0;
 
   ///
-  /// Attempt to release as much memory as possible. Don't call this from any
-  /// callbacks or driver code.
+  /// Attempt to release as much memory as possible.
+  /// 
+  /// @warning Don't call this from any callbacks or driver code.
   ///
   virtual void PurgeMemory() = 0;
 
   ///
   /// Print detailed memory usage statistics to the log.
-  /// (@see Platform::set_logger())
+  /// 
+  /// @see Platform::set_logger
   ///
   virtual void LogMemoryUsage() = 0;
 
   ///
-  /// Start the remote inspector server, Views that are loaded into this renderer
-  /// will be able to be remotely inspected either locally (another app on same machine) or
-  /// remotely (over the network) by navigating a View to inspector://ADDRESS:PORT
+  /// Start the remote inspector server.
+  /// 
+  /// While the remote inspector is active, Views that are loaded into this renderer
+  /// will be able to be remotely inspected from another Ultralight instance either locally
+  /// (another app on same machine) or remotely (over the network) by navigating a View to:
+  /// 
+  /// \code
+  ///   inspector://<ADDRESS>:<PORT>
+  /// \endcode
   /// 
   /// @return  Returns whether the server started successfully or not.
   /// 

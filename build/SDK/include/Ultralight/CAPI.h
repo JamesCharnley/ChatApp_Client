@@ -1,16 +1,10 @@
-///
-/// @file CAPI.h
-///
-/// @brief The C-language API for Ultralight
-///
-/// @author
-///
-/// This file is a part of Ultralight, a fast, lightweight, HTML UI engine
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #ifndef ULTRALIGHT_CAPI_H
 #define ULTRALIGHT_CAPI_H
 
@@ -37,6 +31,7 @@
 #include <Ultralight/CAPI/CAPI_Platform.h>
 #include <Ultralight/CAPI/CAPI_Renderer.h>
 #include <Ultralight/CAPI/CAPI_ScrollEvent.h>
+#include <Ultralight/CAPI/CAPI_GamepadEvent.h>
 #include <Ultralight/CAPI/CAPI_Session.h>
 #include <Ultralight/CAPI/CAPI_String.h>
 #include <Ultralight/CAPI/CAPI_Surface.h>

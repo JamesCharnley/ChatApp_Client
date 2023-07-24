@@ -1,16 +1,10 @@
-///
-/// @file Defines.h
-///
-/// @brief Common platform definitions
-///
-/// @author
-///
-/// This file is a part of Ultralight, a next-generation HTML renderer.
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 
 // Needed for limit defines, like INTMAX_MAX, which is used by the std C++ library
@@ -80,37 +74,37 @@
 #define ULTRALIGHT_VERSION_MINOR 3
 #define ULTRALIGHT_VERSION_PATCH 0
 
+#define WEBKIT_VERSION "610.4.3.1.4"
+#define WEBKIT_VERSION_MAJOR 610
+#define WEBKIT_VERSION_MINOR 4
+#define WEBKIT_VERSION_TINY 3
+#define WEBKIT_VERSION_MICRO 1
+#define WEBKIT_VERSION_NANO 4
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+///
+/// Full library version string (corresponds to ULTRALIGHT_VERSION)
+/// 
 UExport const char* UltralightVersionString();
+
 UExport uint32_t UltralightVersionMajor();
 UExport uint32_t UltralightVersionMinor();
 UExport uint32_t UltralightVersionPatch();
 
+///
+/// Full WebKit version string (corresponds to WEBKIT_VERSION)
+/// 
+UExport const char* WebKitVersionString();
+
+UExport uint32_t WebKitVersionMajor();
+UExport uint32_t WebKitVersionMinor();
+UExport uint32_t WebKitVersionTiny();
+UExport uint32_t WebKitVersionMicro();
+UExport uint32_t WebKitVersionNano();
+
 #ifdef __cplusplus
 }
 #endif
-
-///
-/// @mainpage Ultralight C++ API Reference
-///
-/// @section intro_sec Introduction
-///
-/// Hi there, welcome to the C++ API Reference for Ultralight!
-///
-/// Ultralight is a next-generation HTML renderer for desktop apps and games.
-///
-/// If this is your first time exploring the API, we recommend starting with Renderer.h and View.h.
-///
-///
-/// @section usefullinks_sec Useful Links
-/// - Home:     <https://ultralig.ht> -- Get the latest binaries
-/// - Docs:     <https://docs.ultralig.ht> -- API overview, code snippets, tutorials and more!
-/// - Discord:  <http://chat.ultralig.ht/> -- Stuck? Have questions? Come chat with us!
-/// - GitHub:   <https://github.com/ultralight-ux/ultralight> -- Report issues and browse code
-///
-/// @section copyright_sec Copyright
-/// Documentation is Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///

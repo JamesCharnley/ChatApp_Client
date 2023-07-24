@@ -1,3 +1,10 @@
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #ifndef ULTRALIGHT_CAPI_CLIPBOARD_H
 #define ULTRALIGHT_CAPI_CLIPBOARD_H
 

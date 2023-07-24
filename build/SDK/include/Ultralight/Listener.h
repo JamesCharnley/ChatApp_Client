@@ -1,16 +1,10 @@
-///
-/// @file Listener.h
-///
-/// @brief The header for View listener interfaces.
-///
-/// @author
-///
-/// This file is a part of Ultralight, a fast, lightweight, HTML UI engine
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 #include <Ultralight/Defines.h>
 #include <Ultralight/String.h>
@@ -100,9 +94,9 @@ enum Cursor {
 };
 
 ///
-/// @brief  Interface for View-related events
+/// User-defined interface to listen for View-specific events.
 ///
-/// @note   For more info @see View::set_view_listener
+/// @see View::set_view_listener
 ///
 class UExport ViewListener {
  public:
@@ -136,7 +130,7 @@ class UExport ViewListener {
                                    uint32_t column_number, const String& source_id) { }
 
   ///
-  /// Called when the page wants to create a new View.
+  /// Called when the page wants to create a new child View.
   ///
   /// This is usually the result of a user clicking a link with target="_blank"
   /// or by JavaScript calling window.open(url).
@@ -157,24 +151,36 @@ class UExport ViewListener {
   ///                     window.open(). You can choose to respect these or not by resizing/moving
   ///                     the View to this rect.
   ///
-  /// @return  Returns a RefPtr<> to a created View to use to satisfy the the request (or return
+  /// @return  Returns a RefPtr to a created View to use to satisfy the the request (or return
   ///          nullptr if you want to block the action).
   ///
   virtual RefPtr<View> OnCreateChildView(ultralight::View* caller, const String& opener_url,
                                          const String& target_url, bool is_popup,
                                          const IntRect& popup_rect);
 
+  ///
+  /// Called when the page wants to create a new View to display the local inspector in.
+  /// 
+  /// You should create a new View in this callback (eg, Renderer::CreateView()), resize it to your
+  /// container, and return it. You are responsible for displaying the returned View.
+  ///
+  /// @return  Returns a RefPtr to a created View to use to satisfy the the request (or return
+  ///          nullptr if you want to block the action).
+  /// 
   virtual RefPtr<View> OnCreateInspectorView(ultralight::View* caller, bool is_local,
                                              const String& inspected_url);
 
+  ///
+  /// Called when the page requests to be closed.
+  /// 
   virtual void OnRequestClose(ultralight::View* caller) { }
 
 };
 
 ///
-/// @brief  Interface for Load-related events
+/// User-defined interface to listen for load-related events for a View.
 ///
-/// @note   For more info @see View::set_load_listener
+///  @see View::set_load_listener
 ///
 class UExport LoadListener {
  public:

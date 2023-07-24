@@ -1,16 +1,10 @@
-///
-/// @file View.h
-///
-/// @brief The header for the View class.
-///
-/// @author
-///
-/// This file is a part of Ultralight, a fast, lightweight, HTML UI engine
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 #include <Ultralight/Defines.h>
 #include <Ultralight/RefPtr.h>
@@ -26,6 +20,11 @@
 
 namespace ultralight {
 
+///
+/// View-specific configuration settings.
+/// 
+/// @see Renderer::CreateView
+/// 
 struct UExport ViewConfig {
   ///
   /// Whether to render using the GPU renderer (accelerated) or the CPU renderer (unaccelerated).
@@ -38,7 +37,7 @@ struct UExport ViewConfig {
   ///
   /// When false (the default), the View will be rendered to an offscreen pixel buffer using the
   /// multithreaded CPU renderer. This pixel buffer can optionally be provided by the user--
-  /// for more info see <Ultralight/platform/Surface.h> and View::surface.
+  /// for more info see Platform::set_surface_factory and View::surface.
   ///
   bool is_accelerated = false;
 
@@ -98,29 +97,18 @@ struct UExport ViewConfig {
   /// Default user-agent string.
   ///
   String user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                      "AppleWebKit/608.3.10 (KHTML, like Gecko) "
-                      "Ultralight/1.3.0 Safari/608.3.10";
+                      "AppleWebKit/610.4.3.1.4 (KHTML, like Gecko) "
+                      "Ultralight/1.3.0 Version/14.0.3 Safari/610.4.3.1.4";
 };
 
 ///
-/// @brief The View class is used to load and display web content.
+/// Web-page container rendered to an offscreen surface that you display yourself.
+/// 
+/// The View class is responsible for loading and rendering web-pages to an offscreen surface. It
+/// is completely isolated from the OS windowing system, you must forward all input events to it
+/// from your application.
 ///
-/// View is an offscreen web-page container that can be used to display web-content in your
-/// application.
-///
-/// You can load content into a View via View::LoadURL() or View::LoadHTML() and interact with it
-/// via View::FireMouseEvent() and similar API.
-///
-/// When displaying a View, the API is different depending on whether you are using the CPU
-/// renderer or the GPU renderer:
-///
-/// When using the CPU renderer, you would get the underlying pixel-buffer surface for a View via
-/// View::surface().
-///
-/// When using the GPU renderer, you would get the underlying render target and texture information
-/// via View::render_target().
-///
-/// @note  The API is not currently thread-safe, all calls must be made on the same thread that the
+/// @note  The API is not thread-safe, all calls must be made on the same thread that the
 ///        Renderer/App was created on.
 ///
 class UExport View : public RefCounted {
@@ -176,9 +164,9 @@ class UExport View : public RefCounted {
   ///
   /// Get the RenderTarget for the View.
   ///
-  /// @note  Only valid if this View is GPU accelerated.
+  /// @pre  Only valid if this View is using the GPU renderer (see ViewConfig::is_accelerated).
   ///
-  ///        You can use this with your GPUDriver implementation to bind and display the
+  /// @note  You can use this with your GPUDriver implementation to bind and display the
   ///        corresponding texture in your application.
   ///
   virtual RenderTarget render_target() = 0;
@@ -186,13 +174,11 @@ class UExport View : public RefCounted {
   ///
   /// Get the Surface for the View (native pixel buffer that the CPU renderer draws into).
   ///
-  /// @note  This operation is only valid if you're managing the Renderer yourself (eg, you've
-  ///        previously called Renderer::Create() instead of App::Create()).
-  ///
-  ///        This function will return nullptr if this View is GPU accelerated (eg, not using
-  ///        the CPU renderer). @see ViewConfig::is_accelerated
-  ///
-  ///        The default Surface is BitmapSurface but you can provide your own Surface
+  /// @pre  This operation is only valid if the View is using the CPU renderer, (eg, it is
+  ///       **not** GPU accelerated, see ViewConfig::is_accelerated). This function will return
+  ///       return nullptr if the View is using the GPU renderer.
+  /// 
+  /// @note  The default Surface is BitmapSurface but you can provide your own Surface
   ///        implementation via Platform::set_surface_factory().
   ///
   virtual Surface* surface() = 0;

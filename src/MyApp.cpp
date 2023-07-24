@@ -27,7 +27,9 @@ MyApp::MyApp() {
   /// position because it'll be calculated when we call OnResize() below.
   ///
   side_panel = Overlay::Create(window_, 1, 1, 0, 0);
-  side_panel_view = HTML_View_Sidepanel(side_panel->view().get());
+  side_panel_view = HTML_View_Sidepanel(side_panel->view().get(), side_panel, this);
+  htmlViews.push_back(&side_panel_view);
+
   room_panel = Overlay::Create(window_, 1, 1, 0, 0);
   login_panel = Overlay::Create(window_, 1, 1, 0, 0);
   dashboard_panel = Overlay::Create(window_, 1, 1, 0, 0);
@@ -151,14 +153,23 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   ///
   /// We resize our overlay here to take up the entire window.
   ///
-  side_panel->Resize(width, height);
+  //side_panel->Resize(width, height);
   room_panel->Resize(width, height);
   login_panel->Resize(width, height);
   dashboard_panel->Resize(width, height);
   create_room_panel->Resize(width, height);
 
+  for (std::vector<HTML_View*>::iterator it = htmlViews.begin(); it != htmlViews.end(); it++)
+  {
+      HTML_View* view = *it;
+      if (view != nullptr)
+      {
+          view->Resize(window, width, height);
+      }
+  }
+
   uint32_t left_pane_width_px = window_->ScreenToPixels(300);
-  side_panel->Resize(left_pane_width_px, height);
+  //side_panel->Resize(left_pane_width_px, height);
 
   // Calculate the width of our right pane (window width - left width)
   int right_pane_width = (int)width - left_pane_width_px;
@@ -171,7 +182,7 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   dashboard_panel->Resize((uint32_t)right_pane_width, height);
   create_room_panel->Resize((uint32_t)right_pane_width, height);
 
-  side_panel->MoveTo(0, 0);
+  //side_panel->MoveTo(0, 0);
   room_panel->MoveTo(left_pane_width_px, 0);
   login_panel->MoveTo(left_pane_width_px, 0);
   dashboard_panel->MoveTo(left_pane_width_px, 0);
@@ -283,17 +294,17 @@ JSValueRef cpp_create_room(JSContextRef ctx, JSObjectRef function,
 }
 
 // This callback will be bound to 'CPPLogin()' on the page.
-JSValueRef CPPOpenDashboard(JSContextRef ctx, JSObjectRef function,
-    JSObjectRef thisObject, size_t argumentCount,
-    const JSValueRef arguments[], JSValueRef* exception) {
-
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPOpenDashboard() called"));
-
-    global_MyApp->clear_current_room();
-    global_MyApp->open_dashboard();
-
-    return JSValueMakeNull(ctx);
-}
+//JSValueRef CPPOpenDashboard(JSContextRef ctx, JSObjectRef function,
+//    JSObjectRef thisObject, size_t argumentCount,
+//    const JSValueRef arguments[], JSValueRef* exception) {
+//
+//    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPOpenDashboard() called"));
+//
+//    global_MyApp->clear_current_room();
+//    global_MyApp->open_dashboard();
+//
+//    return JSValueMakeNull(ctx);
+//}
 
 // This callback will be bound to 'CPPLogin()' on the page.
 JSValueRef CPPLogin(JSContextRef ctx, JSObjectRef function,
@@ -369,15 +380,15 @@ JSValueRef CPPSubmitMessage(JSContextRef ctx, JSObjectRef function,
     return JSValueMakeNull(ctx);
 }
 
-JSValueRef cpp_open_create_room_panel(JSContextRef ctx, JSObjectRef function,
-    JSObjectRef thisObject, size_t argumentCount,
-    const JSValueRef arguments[], JSValueRef* exception) {
-
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("open_create_room_panel() called"));
-
-    global_MyApp->open_create_room_panel();
-    return JSValueMakeNull(ctx);
-}
+//JSValueRef cpp_open_create_room_panel(JSContextRef ctx, JSObjectRef function,
+//    JSObjectRef thisObject, size_t argumentCount,
+//    const JSValueRef arguments[], JSValueRef* exception) {
+//
+//    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("open_create_room_panel() called"));
+//
+//    global_MyApp->open_create_room_panel();
+//    return JSValueMakeNull(ctx);
+//}
 
 void MyApp::OnDOMReady(ultralight::View* caller,
                        uint64_t frame_id,
@@ -516,44 +527,44 @@ void MyApp::OnDOMReady(ultralight::View* caller,
     {
         side_panel_view.DOMLoaded = true;
         side_panel_view.Update();
-
-        ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
-        // Get the underlying JSContextRef for use with the
-        // JavaScriptCore C API.
-        JSContextRef ctx = context->ctx();
-
-        // Create a JavaScript String containing the name of our callback.
-        JSStringRef name = JSStringCreateWithUTF8CString("open_dashboard");
-
-        // Create a garbage-collected JavaScript function that is bound to our
-        // native C callback 'OnButtonClick()'.
-        JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
-            CPPOpenDashboard);
-
-        // Get the global JavaScript object (aka 'window')
-        JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
-
-        // Store our function in the page's global JavaScript object so that it
-        // accessible from the page as 'OnButtonClick()'.
-        JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
-
-        // Release the JavaScript String we created earlier.
-        JSStringRelease(name);
-
-        // Create a JavaScript String containing the name of our callback.
-        JSStringRef name_create_room = JSStringCreateWithUTF8CString("open_create_room_panel");
-
-        // Create a garbage-collected JavaScript function that is bound to our
-        // native C callback 'OnButtonClick()'.
-        JSObjectRef func_open_create_room = JSObjectMakeFunctionWithCallback(ctx, name_create_room,
-            cpp_open_create_room_panel);
-
-        // Store our function in the page's global JavaScript object so that it
-        // accessible from the page as 'OnButtonClick()'.
-        JSObjectSetProperty(ctx, globalObj, name_create_room, func_open_create_room, 0, 0);
-
-        // Release the JavaScript String we created earlier.
-        JSStringRelease(name_create_room);
+        side_panel_view.BindJavaScriptFunctions();
+        //ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
+        //// Get the underlying JSContextRef for use with the
+        //// JavaScriptCore C API.
+        //JSContextRef ctx = context->ctx();
+        //
+        //// Create a JavaScript String containing the name of our callback.
+        //JSStringRef name = JSStringCreateWithUTF8CString("open_dashboard");
+        //
+        //// Create a garbage-collected JavaScript function that is bound to our
+        //// native C callback 'OnButtonClick()'.
+        //JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
+        //    CPPOpenDashboard);
+        //
+        //// Get the global JavaScript object (aka 'window')
+        //JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
+        //
+        //// Store our function in the page's global JavaScript object so that it
+        //// accessible from the page as 'OnButtonClick()'.
+        //JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+        //
+        //// Release the JavaScript String we created earlier.
+        //JSStringRelease(name);
+        //
+        //// Create a JavaScript String containing the name of our callback.
+        //JSStringRef name_create_room = JSStringCreateWithUTF8CString("open_create_room_panel");
+        //
+        //// Create a garbage-collected JavaScript function that is bound to our
+        //// native C callback 'OnButtonClick()'.
+        //JSObjectRef func_open_create_room = JSObjectMakeFunctionWithCallback(ctx, name_create_room,
+        //    cpp_open_create_room_panel);
+        //
+        //// Store our function in the page's global JavaScript object so that it
+        //// accessible from the page as 'OnButtonClick()'.
+        //JSObjectSetProperty(ctx, globalObj, name_create_room, func_open_create_room, 0, 0);
+        //
+        //// Release the JavaScript String we created earlier.
+        //JSStringRelease(name_create_room);
         
     }
 

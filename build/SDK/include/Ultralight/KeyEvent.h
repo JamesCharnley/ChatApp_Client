@@ -1,16 +1,10 @@
-///
-/// @file KeyEvent.h
-///
-/// @brief The header for the KeyEvent class.
-///
-/// @author
-///
-/// This file is a part of Ultralight, a fast, lightweight, HTML UI engine
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 #include <Ultralight/Defines.h>
 #include <Ultralight/KeyCodes.h>
@@ -22,9 +16,9 @@
 namespace ultralight {
 
 ///
-/// @brief  A generic keyboard event, created from a platform event or synthesized from scratch.
+/// Generic keyboard event representing a change in keyboard state.
 ///
-/// @see    View::FireKeyEvent
+/// @see  View::FireKeyEvent
 ///
 class UExport KeyEvent {
  public:

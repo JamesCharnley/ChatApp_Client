@@ -1,3 +1,23 @@
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
+
+///
+/// @file CAPI_View.h
+///
+/// View is a web-page container rendered to an offscreen surface that you display yourself.
+///
+/// The View object is responsible for loading and rendering web-pages to an offscreen surface. It
+/// is completely isolated from the OS windowing system, you must forward all input events to it
+/// from your application.
+///
+/// @note  The API is not thread-safe, all calls must be made on the same thread that the
+///        Renderer/App was created on.
+///
 #ifndef ULTRALIGHT_CAPI_VIEW_H
 #define ULTRALIGHT_CAPI_VIEW_H
 
@@ -385,6 +405,12 @@ ULExport void ulViewSetCreateChildViewCallback(ULView view, ULCreateChildViewCal
 typedef ULView (*ULCreateInspectorViewCallback)(void* user_data, ULView caller, bool is_local,
                                                 ULString inspected_url);
 
+///
+/// Set callback for when the page wants to create a new View to display the local inspector in.
+/// 
+/// You should create a new View in this callback, resize it to your
+/// container, and return it. You are responsible for displaying the returned View.
+/// 
 ULExport void ulViewSetCreateInspectorViewCallback(ULView view, ULCreateInspectorViewCallback callback,
                                                    void* user_data);
 
@@ -473,7 +499,7 @@ ULExport bool ulViewGetNeedsPaint(ULView view);
 /// This will only succeed if you have the inspector assets in your filesystem-- the inspector
 /// will look for file:///inspector/Main.html when it first loads.
 ///
-/// You must handle ULCreateChildViewCallback so that the library has a View to display
+/// You must handle ulViewSetCreateInspectorViewCallback so that the library has a View to display
 /// the inspector in. This function will call the callback only if an inspector view is not
 /// currently active.
 ///

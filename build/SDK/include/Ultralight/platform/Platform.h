@@ -1,16 +1,10 @@
-///
-/// @file Platform.h
-///
-/// @brief The header for the Platform singleton.
-///
-/// @author
-///
-/// This file is a part of Ultralight, a next-generation HTML renderer.
-///
-/// Website: <http://ultralig.ht>
-///
-/// Copyright (C) 2022 Ultralight, Inc. All rights reserved.
-///
+/******************************************************************************
+ *  This file is a part of Ultralight, an ultra-portable web-browser engine.  *
+ *                                                                            *
+ *  See <https://ultralig.ht> for licensing and more.                         *
+ *                                                                            *
+ *  (C) 2023 Ultralight, Inc.                                                 *
+ *****************************************************************************/
 #pragma once
 #include <Ultralight/Defines.h>
 
@@ -25,10 +19,23 @@ class Clipboard;
 class SurfaceFactory;
 
 ///
-/// @brief  Platform singleton to configure Ultralight and provide user-defined implementations for
-///         various platform operations.
-///
-/// @note  The config and user-defined implementations should be set before creating the Renderer.
+/// Global platform singleton, manages user-defined platform handlers and global config.
+/// 
+/// The library uses the Platform API for most platform-specific operations (eg, file access,
+/// clipboard, font loading, GPU access, etc.).
+/// 
+/// @par Overview of which platform handlers are required / optional / provided:
+/// 
+/// |                | Renderer::Create() | App::Create() |
+/// |----------------|--------------------|---------------|
+/// | FileSystem     | **Required**       | *Provided*    |
+/// | FontLoader     | **Required**       | *Provided*    |
+/// | Clipboard      |  *Optional*        | *Provided*    |
+/// | GPUDriver      |  *Optional*        | *Provided*    |
+/// | Logger         |  *Optional*        | *Provided*    |
+/// | SurfaceFactory |  *Provided*        | *Provided*    |
+/// 
+/// @note  This singleton should be set up before creating the Renderer or App.
 ///
 class UExport Platform {
  public:
