@@ -10,6 +10,7 @@
 #include <string>
 #include "HTML_View_Sidepanel.h"
 #include "HTML_View_Dashboard.h"
+#include "HTML_View_Login_Panel.h"
 #include "PacketDecoder.h"
 #include "Client.h"
 #include "Room.h"
@@ -102,7 +103,10 @@ protected:
   HTML_View_Sidepanel side_panel_view;
   RefPtr<Overlay> side_panel;
   RefPtr<Overlay> room_panel;
+
+  HTML_View_Login_Panel login_panel_view;
   RefPtr<Overlay> login_panel;
+
   HTML_View_Dashboard dashboard_panel_view;
   RefPtr<Overlay> dashboard_panel;
   RefPtr<Overlay> create_room_panel;
