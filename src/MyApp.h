@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include "HTML_View_Sidepanel.h"
+#include "HTML_View_Dashboard.h"
 #include "PacketDecoder.h"
 #include "Client.h"
 #include "Room.h"
@@ -102,6 +103,7 @@ protected:
   RefPtr<Overlay> side_panel;
   RefPtr<Overlay> room_panel;
   RefPtr<Overlay> login_panel;
+  HTML_View_Dashboard dashboard_panel_view;
   RefPtr<Overlay> dashboard_panel;
   RefPtr<Overlay> create_room_panel;
 

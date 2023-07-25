@@ -33,6 +33,8 @@ MyApp::MyApp() {
   room_panel = Overlay::Create(window_, 1, 1, 0, 0);
   login_panel = Overlay::Create(window_, 1, 1, 0, 0);
   dashboard_panel = Overlay::Create(window_, 1, 1, 0, 0);
+  dashboard_panel_view = HTML_View_Dashboard(dashboard_panel->view().get(), dashboard_panel, this);
+  htmlViews.push_back(&dashboard_panel_view);
   create_room_panel = Overlay::Create(window_, 1, 1, 0, 0);
 
   ///
@@ -92,7 +94,7 @@ MyApp::MyApp() {
   USHORT LocalPort = 8000;
   USHORT ServerPort = 8080;
   char add[20];
-  std::string str = "192.168.1.24";
+  std::string str = "192.168.1.25";
   for (int i = 0; i < str.length(); i++)
   {
       add[i] = str[i];
@@ -156,7 +158,7 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   //side_panel->Resize(width, height);
   room_panel->Resize(width, height);
   login_panel->Resize(width, height);
-  dashboard_panel->Resize(width, height);
+  //ashboard_panel->Resize(width, height);
   create_room_panel->Resize(width, height);
 
   for (std::vector<HTML_View*>::iterator it = htmlViews.begin(); it != htmlViews.end(); it++)
@@ -179,13 +181,13 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
 
   room_panel->Resize((uint32_t)right_pane_width, height);
   login_panel->Resize((uint32_t)right_pane_width, height);
-  dashboard_panel->Resize((uint32_t)right_pane_width, height);
+  //dashboard_panel->Resize((uint32_t)right_pane_width, height);
   create_room_panel->Resize((uint32_t)right_pane_width, height);
 
   //side_panel->MoveTo(0, 0);
   room_panel->MoveTo(left_pane_width_px, 0);
   login_panel->MoveTo(left_pane_width_px, 0);
-  dashboard_panel->MoveTo(left_pane_width_px, 0);
+  //dashboard_panel->MoveTo(left_pane_width_px, 0);
   create_room_panel->MoveTo(left_pane_width_px, 0);
 }
 
@@ -199,37 +201,37 @@ void MyApp::OnFinishLoading(ultralight::View* caller,
   ///
 }
 
-// This callback will be bound to 'ChangeRoom()' on the HTML page.
-JSValueRef ChangeRoom(JSContextRef ctx, JSObjectRef function,
-    JSObjectRef thisObject, size_t argumentCount,
-    const JSValueRef arguments[], JSValueRef* exception) {
-
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom() called"));
-
-    std::string* strs = new std::string[argumentCount];
-
-    for (int i = 0; i < argumentCount; i++)
-    {
-        JSType argType = JSValueGetType(ctx, arguments[i]);
-        if (argType == JSType::kJSTypeString)
-        {
-            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
-            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
-            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
-            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
-            //ultralight::String str(stringBuffer.get(), length);
-            std::string str(stringBuffer.get());
-            strs[i] = str;
-
-        }
-    }
-
-    global_MyApp->ChangeRoom_CPP(strs[0], strs[1]);
-
-    delete[] strs;
-
-    return JSValueMakeNull(ctx);
-}
+//// This callback will be bound to 'ChangeRoom()' on the HTML page.
+//JSValueRef ChangeRoom(JSContextRef ctx, JSObjectRef function,
+//    JSObjectRef thisObject, size_t argumentCount,
+//    const JSValueRef arguments[], JSValueRef* exception) {
+//
+//    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom() called"));
+//
+//    std::string* strs = new std::string[argumentCount];
+//
+//    for (int i = 0; i < argumentCount; i++)
+//    {
+//        JSType argType = JSValueGetType(ctx, arguments[i]);
+//        if (argType == JSType::kJSTypeString)
+//        {
+//            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
+//            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
+//            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
+//            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
+//            //ultralight::String str(stringBuffer.get(), length);
+//            std::string str(stringBuffer.get());
+//            strs[i] = str;
+//
+//        }
+//    }
+//
+//    global_MyApp->ChangeRoom_CPP(strs[0], strs[1]);
+//
+//    delete[] strs;
+//
+//    return JSValueMakeNull(ctx);
+//}
 
 // This callback will be bound to 'CPPLogin()' on the page.
 JSValueRef CPPSignup(JSContextRef ctx, JSObjectRef function,
@@ -570,28 +572,31 @@ void MyApp::OnDOMReady(ultralight::View* caller,
 
     if (caller == dashboard_panel->view())
     {
-        ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
-        // Get the underlying JSContextRef for use with the
-        // JavaScriptCore C API.
-        JSContextRef ctx = context->ctx();
-
-        // Create a JavaScript String containing the name of our callback.
-        JSStringRef name = JSStringCreateWithUTF8CString("ChangeRoom");
-
-        // Create a garbage-collected JavaScript function that is bound to our
-        // native C callback 'OnButtonClick()'.
-        JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
-            ChangeRoom);
-
-        // Get the global JavaScript object (aka 'window')
-        JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
-
-        // Store our function in the page's global JavaScript object so that it
-        // accessible from the page as 'OnButtonClick()'.
-        JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
-
-        // Release the JavaScript String we created earlier.
-        JSStringRelease(name);
+        dashboard_panel_view.DOMLoaded = true;
+        dashboard_panel_view.Update();
+        dashboard_panel_view.BindJavaScriptFunctions();
+        //ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
+        //// Get the underlying JSContextRef for use with the
+        //// JavaScriptCore C API.
+        //JSContextRef ctx = context->ctx();
+        //
+        //// Create a JavaScript String containing the name of our callback.
+        //JSStringRef name = JSStringCreateWithUTF8CString("ChangeRoom");
+        //
+        //// Create a garbage-collected JavaScript function that is bound to our
+        //// native C callback 'OnButtonClick()'.
+        //JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
+        //    ChangeRoom);
+        //
+        //// Get the global JavaScript object (aka 'window')
+        //JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
+        //
+        //// Store our function in the page's global JavaScript object so that it
+        //// accessible from the page as 'OnButtonClick()'.
+        //JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+        //
+        //// Release the JavaScript String we created earlier.
+        //JSStringRelease(name);
     }
    
     if (caller == create_room_panel->view())
