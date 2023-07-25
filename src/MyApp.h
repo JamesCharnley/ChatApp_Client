@@ -12,6 +12,7 @@
 #include "HTML_View_Dashboard.h"
 #include "HTML_View_Login_Panel.h"
 #include "HTML_View_RoomPanel.h"
+#include "HTML_View_CreateRoomPanel.h"
 #include "PacketDecoder.h"
 #include "Client.h"
 #include "Room.h"
@@ -112,6 +113,8 @@ protected:
 
   HTML_View_Dashboard dashboard_panel_view;
   RefPtr<Overlay> dashboard_panel;
+
+  HTML_View_CreateRoomPanel create_room_panel_view;
   RefPtr<Overlay> create_room_panel;
 
   std::vector<HTML_View*> htmlViews = std::vector<HTML_View*>();

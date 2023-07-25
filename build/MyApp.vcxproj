@@ -444,6 +444,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\src\Client.h" />
     <ClInclude Include="..\src\Connection.h" />
     <ClInclude Include="..\src\HTML_View.h" />
+    <ClInclude Include="..\src\HTML_View_CreateRoomPanel.h" />
     <ClInclude Include="..\src\Html_View_Dashboard.h" />
     <ClInclude Include="..\src\HTML_View_Login_Panel.h" />
     <ClInclude Include="..\src\HTML_View_RoomPanel.h" />
@@ -455,6 +456,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\Client.cpp" />
     <ClCompile Include="..\src\Connection.cpp" />
     <ClCompile Include="..\src\HTML_View.cpp" />
+    <ClCompile Include="..\src\HTML_View_CreateRoomPanel.cpp" />
     <ClCompile Include="..\src\HTML_View_Dashboard.cpp" />
     <ClCompile Include="..\src\HTML_View_Login_Panel.cpp" />
     <ClCompile Include="..\src\HTML_View_RoomPanel.cpp" />

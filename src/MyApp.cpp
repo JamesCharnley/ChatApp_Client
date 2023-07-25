@@ -43,6 +43,8 @@ MyApp::MyApp() {
   htmlViews.push_back(&dashboard_panel_view);
 
   create_room_panel = Overlay::Create(window_, 1, 1, 0, 0);
+  create_room_panel_view = HTML_View_CreateRoomPanel(create_room_panel->view().get(), create_room_panel, this, clientNetworking);
+  htmlViews.push_back(&create_room_panel_view);
 
   ///
   /// Force a call to OnResize to perform size/layout of our overlay.
@@ -166,7 +168,7 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   //room_panel->Resize(width, height);
   //login_panel->Resize(width, height);
   //ashboard_panel->Resize(width, height);
-  create_room_panel->Resize(width, height);
+  //create_room_panel->Resize(width, height);
 
   for (std::vector<HTML_View*>::iterator it = htmlViews.begin(); it != htmlViews.end(); it++)
   {
@@ -177,25 +179,25 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
       }
   }
 
-  uint32_t left_pane_width_px = window_->ScreenToPixels(300);
-  //side_panel->Resize(left_pane_width_px, height);
-
-  // Calculate the width of our right pane (window width - left width)
-  int right_pane_width = (int)width - left_pane_width_px;
-
-  // Clamp our right pane's width to a minimum of 1
-  right_pane_width = right_pane_width > 1 ? right_pane_width : 1;
-
-  //room_panel->Resize((uint32_t)right_pane_width, height);
-  //login_panel->Resize((uint32_t)right_pane_width, height);
-  //dashboard_panel->Resize((uint32_t)right_pane_width, height);
-  create_room_panel->Resize((uint32_t)right_pane_width, height);
-
-  //side_panel->MoveTo(0, 0);
-  //room_panel->MoveTo(left_pane_width_px, 0);
-  //login_panel->MoveTo(left_pane_width_px, 0);
-  //dashboard_panel->MoveTo(left_pane_width_px, 0);
-  create_room_panel->MoveTo(left_pane_width_px, 0);
+  //uint32_t left_pane_width_px = window_->ScreenToPixels(300);
+  ////side_panel->Resize(left_pane_width_px, height);
+  //
+  //// Calculate the width of our right pane (window width - left width)
+  //int right_pane_width = (int)width - left_pane_width_px;
+  //
+  //// Clamp our right pane's width to a minimum of 1
+  //right_pane_width = right_pane_width > 1 ? right_pane_width : 1;
+  //
+  ////room_panel->Resize((uint32_t)right_pane_width, height);
+  ////login_panel->Resize((uint32_t)right_pane_width, height);
+  ////dashboard_panel->Resize((uint32_t)right_pane_width, height);
+  //create_room_panel->Resize((uint32_t)right_pane_width, height);
+  //
+  ////side_panel->MoveTo(0, 0);
+  ////room_panel->MoveTo(left_pane_width_px, 0);
+  ////login_panel->MoveTo(left_pane_width_px, 0);
+  ////dashboard_panel->MoveTo(left_pane_width_px, 0);
+  //create_room_panel->MoveTo(left_pane_width_px, 0);
 }
 
 
@@ -273,34 +275,34 @@ void MyApp::OnFinishLoading(ultralight::View* caller,
 //    return JSValueMakeNull(ctx);
 //}
 
-JSValueRef cpp_create_room(JSContextRef ctx, JSObjectRef function,
-    JSObjectRef thisObject, size_t argumentCount,
-    const JSValueRef arguments[], JSValueRef* exception) {
-
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("cpp_create_room() called"));
-
-    std::string room_name = "";
-
-    for (int i = 0; i < argumentCount; i++)
-    {
-        JSType argType = JSValueGetType(ctx, arguments[i]);
-        if (argType == JSType::kJSTypeString)
-        {
-            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
-            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
-            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
-            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
-            //ultralight::String str(stringBuffer.get(), length);
-            std::string str(stringBuffer.get());
-            room_name = str;
-
-        }
-    }
-    
-    global_MyApp->create_room_cpp(room_name);
-
-    return JSValueMakeNull(ctx);
-}
+//JSValueRef cpp_create_room(JSContextRef ctx, JSObjectRef function,
+//    JSObjectRef thisObject, size_t argumentCount,
+//    const JSValueRef arguments[], JSValueRef* exception) {
+//
+//    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("cpp_create_room() called"));
+//
+//    std::string room_name = "";
+//
+//    for (int i = 0; i < argumentCount; i++)
+//    {
+//        JSType argType = JSValueGetType(ctx, arguments[i]);
+//        if (argType == JSType::kJSTypeString)
+//        {
+//            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
+//            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
+//            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
+//            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
+//            //ultralight::String str(stringBuffer.get(), length);
+//            std::string str(stringBuffer.get());
+//            room_name = str;
+//
+//        }
+//    }
+//    
+//    global_MyApp->create_room_cpp(room_name);
+//
+//    return JSValueMakeNull(ctx);
+//}
 
 // This callback will be bound to 'CPPLogin()' on the page.
 //JSValueRef CPPOpenDashboard(JSContextRef ctx, JSObjectRef function,
@@ -460,7 +462,9 @@ void MyApp::OnDOMReady(ultralight::View* caller,
 
     if (caller == room_panel->view())
     {
-        
+        room_panel_view.DOMLoaded = true;
+        room_panel_view.Update();
+        room_panel_view.BindJavaScriptFunctions();
         CheckQueue();
 
         // Acquire the JS execution context for the current page.
@@ -611,30 +615,34 @@ void MyApp::OnDOMReady(ultralight::View* caller,
    
     if (caller == create_room_panel->view())
     {
-        ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
-        // Get the underlying JSContextRef for use with the
-        // JavaScriptCore C API.
-        JSContextRef ctx = context->ctx();
+        create_room_panel_view.DOMLoaded = true;
+        create_room_panel_view.Update();
+        create_room_panel_view.BindJavaScriptFunctions();
 
-        // Create a JavaScript String containing the name of our callback.
-        JSStringRef name = JSStringCreateWithUTF8CString("cpp_create_room");
-
-        // Create a garbage-collected JavaScript function that is bound to our
-        // native C callback 'OnButtonClick()'.
-        JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
-            cpp_create_room);
-
-        // Get the global JavaScript object (aka 'window')
-        JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
-
-        // Store our function in the page's global JavaScript object so that it
-        // accessible from the page as 'OnButtonClick()'.
-        JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
-
-        // Release the JavaScript String we created earlier.
-        JSStringRelease(name);
-
-        create_room_panel->Hide();
+        //ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
+        //// Get the underlying JSContextRef for use with the
+        //// JavaScriptCore C API.
+        //JSContextRef ctx = context->ctx();
+        //
+        //// Create a JavaScript String containing the name of our callback.
+        //JSStringRef name = JSStringCreateWithUTF8CString("cpp_create_room");
+        //
+        //// Create a garbage-collected JavaScript function that is bound to our
+        //// native C callback 'OnButtonClick()'.
+        //JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
+        //    cpp_create_room);
+        //
+        //// Get the global JavaScript object (aka 'window')
+        //JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
+        //
+        //// Store our function in the page's global JavaScript object so that it
+        //// accessible from the page as 'OnButtonClick()'.
+        //JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+        //
+        //// Release the JavaScript String we created earlier.
+        //JSStringRelease(name);
+        //
+        //create_room_panel->Hide();
     }
     ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("DOMREADY END"));
 }
@@ -714,16 +722,6 @@ void MyApp::UserLoggedIn(FString_Packet _packet)
 
 void MyApp::ChangeRoom_CPP(std::string _room_id, std::string _room_name)
 {
-   //ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("ChangeRoom_CPP"));
-   //int com = (int)ECommand::Get;
-   //std::string com_string = std::to_string(com);
-   //
-   //int sub_com = (int)ESub_Command::Room;
-   //std::string sub_com_string = std::to_string(sub_com);
-   //
-   //std::string packetString = com_string + ";" + sub_com_string + ";" + _room;
-   //
-   //clientNetworking->SendMessageToServer(packetString);
 
     Room* room = get_active_room(std::stoi(_room_id));
     if (room)
@@ -922,15 +920,3 @@ void MyApp::open_create_room_panel()
         create_room_panel->Show();
     }
 }
-
-
-//ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("user logged in"));
-//ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, _packet._string);
-//user.Username = _packet._string;
-//
-//char* chartest = new char[3];
-//chartest[0] = 'h';
-//chartest[1] = 'i';
-//chartest[2] = '\0';
-//std::string test(chartest);
-////ultralight::String ulTest(test.c_str());
