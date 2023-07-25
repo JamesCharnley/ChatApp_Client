@@ -31,6 +31,8 @@ MyApp::MyApp() {
   htmlViews.push_back(&side_panel_view);
 
   room_panel = Overlay::Create(window_, 1, 1, 0, 0);
+  room_panel_view = HTML_View_RoomPanel(room_panel->view().get(), room_panel, this, clientNetworking);
+  htmlViews.push_back(&room_panel_view);
 
   login_panel = Overlay::Create(window_, 1, 1, 0, 0);
   login_panel_view = HTML_View_Login_Panel(login_panel->view().get(), login_panel, this, clientNetworking);
@@ -161,7 +163,7 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   /// We resize our overlay here to take up the entire window.
   ///
   //side_panel->Resize(width, height);
-  room_panel->Resize(width, height);
+  //room_panel->Resize(width, height);
   //login_panel->Resize(width, height);
   //ashboard_panel->Resize(width, height);
   create_room_panel->Resize(width, height);
@@ -184,13 +186,13 @@ void MyApp::OnResize(ultralight::Window* window, uint32_t width, uint32_t height
   // Clamp our right pane's width to a minimum of 1
   right_pane_width = right_pane_width > 1 ? right_pane_width : 1;
 
-  room_panel->Resize((uint32_t)right_pane_width, height);
+  //room_panel->Resize((uint32_t)right_pane_width, height);
   //login_panel->Resize((uint32_t)right_pane_width, height);
   //dashboard_panel->Resize((uint32_t)right_pane_width, height);
   create_room_panel->Resize((uint32_t)right_pane_width, height);
 
   //side_panel->MoveTo(0, 0);
-  room_panel->MoveTo(left_pane_width_px, 0);
+  //room_panel->MoveTo(left_pane_width_px, 0);
   //login_panel->MoveTo(left_pane_width_px, 0);
   //dashboard_panel->MoveTo(left_pane_width_px, 0);
   create_room_panel->MoveTo(left_pane_width_px, 0);
@@ -349,43 +351,43 @@ JSValueRef cpp_create_room(JSContextRef ctx, JSObjectRef function,
 //    return JSValueMakeNull(ctx);
 //}
 
-JSValueRef CPPSubmitMessage(JSContextRef ctx, JSObjectRef function,
-    JSObjectRef thisObject, size_t argumentCount,
-    const JSValueRef arguments[], JSValueRef* exception) {
-
-    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPSubmitMessage"));
-
-    std::string message = "";
-
-    for (int i = 0; i < argumentCount; i++)
-    {
-        JSType argType = JSValueGetType(ctx, arguments[i]);
-        if (argType == JSType::kJSTypeString)
-        {
-            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
-            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
-            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
-            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
-            //ultralight::String str(stringBuffer.get(), length);
-            std::string str(stringBuffer.get());
-            message = str;
-
-        }
-    }
-    if (global_MyApp->get_current_room() != nullptr)
-    {
-        FPost_Message_Packet packet = { ECommand::Post, ESub_Command::Message, global_MyApp->get_current_room()->Get_ID(), message };
-
-        std::string packet_string = PacketDecoder::Post_Message_Packet_To_String(packet);
-
-        global_client->SendMessageToServer(packet_string);
-    }
-    
-    
-    
-
-    return JSValueMakeNull(ctx);
-}
+//JSValueRef CPPSubmitMessage(JSContextRef ctx, JSObjectRef function,
+//    JSObjectRef thisObject, size_t argumentCount,
+//    const JSValueRef arguments[], JSValueRef* exception) {
+//
+//    ultralight::GetDefaultLogger("C:/Users/James/AppData/Roaming/MyCompany/MyApp/default/ultralight.log")->LogMessage(ultralight::LogLevel::Info, String("CPPSubmitMessage"));
+//
+//    std::string message = "";
+//
+//    for (int i = 0; i < argumentCount; i++)
+//    {
+//        JSType argType = JSValueGetType(ctx, arguments[i]);
+//        if (argType == JSType::kJSTypeString)
+//        {
+//            JSStringRef msgArgumentJSRef = JSValueToStringCopy(ctx, arguments[i], NULL);
+//            size_t length = JSStringGetLength(msgArgumentJSRef) + 1;
+//            std::unique_ptr<char[]> stringBuffer = std::make_unique<char[]>(length);
+//            JSStringGetUTF8CString(msgArgumentJSRef, stringBuffer.get(), length);
+//            //ultralight::String str(stringBuffer.get(), length);
+//            std::string str(stringBuffer.get());
+//            message = str;
+//
+//        }
+//    }
+//    if (global_MyApp->get_current_room() != nullptr)
+//    {
+//        FPost_Message_Packet packet = { ECommand::Post, ESub_Command::Message, global_MyApp->get_current_room()->Get_ID(), message };
+//
+//        std::string packet_string = PacketDecoder::Post_Message_Packet_To_String(packet);
+//
+//        global_client->SendMessageToServer(packet_string);
+//    }
+//    
+//    
+//    
+//
+//    return JSValueMakeNull(ctx);
+//}
 
 //JSValueRef cpp_open_create_room_panel(JSContextRef ctx, JSObjectRef function,
 //    JSObjectRef thisObject, size_t argumentCount,
@@ -466,30 +468,30 @@ void MyApp::OnDOMReady(ultralight::View* caller,
   // This call will lock the execution context for the current
   // thread as long as the Ref<> is alive.
 
-        ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
-        // Get the underlying JSContextRef for use with the
-        // JavaScriptCore C API.
-        JSContextRef ctx = context->ctx();
-
-        // Create a JavaScript String containing the name of our callback.
-        JSStringRef name = JSStringCreateWithUTF8CString("CPPSubmitMessage");
-
-        // Create a garbage-collected JavaScript function that is bound to our
-        // native C callback 'OnButtonClick()'.
-        JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
-            CPPSubmitMessage);
-
-        // Get the global JavaScript object (aka 'window')
-        JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
-
-        // Store our function in the page's global JavaScript object so that it
-        // accessible from the page as 'OnButtonClick()'.
-        JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
-
-        
-
-        // Release the JavaScript String we created earlier.
-        JSStringRelease(name);
+        //ultralight::RefPtr<ultralight::JSContext> context = caller->LockJSContext();
+        //// Get the underlying JSContextRef for use with the
+        //// JavaScriptCore C API.
+        //JSContextRef ctx = context->ctx();
+        //
+        //// Create a JavaScript String containing the name of our callback.
+        //JSStringRef name = JSStringCreateWithUTF8CString("CPPSubmitMessage");
+        //
+        //// Create a garbage-collected JavaScript function that is bound to our
+        //// native C callback 'OnButtonClick()'.
+        //JSObjectRef func = JSObjectMakeFunctionWithCallback(ctx, name,
+        //    CPPSubmitMessage);
+        //
+        //// Get the global JavaScript object (aka 'window')
+        //JSObjectRef globalObj = JSContextGetGlobalObject(ctx);
+        //
+        //// Store our function in the page's global JavaScript object so that it
+        //// accessible from the page as 'OnButtonClick()'.
+        //JSObjectSetProperty(ctx, globalObj, name, func, 0, 0);
+        //
+        //
+        //
+        //// Release the JavaScript String we created earlier.
+        //JSStringRelease(name);
 
 
     }

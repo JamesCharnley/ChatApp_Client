@@ -11,6 +11,7 @@
 #include "HTML_View_Sidepanel.h"
 #include "HTML_View_Dashboard.h"
 #include "HTML_View_Login_Panel.h"
+#include "HTML_View_RoomPanel.h"
 #include "PacketDecoder.h"
 #include "Client.h"
 #include "Room.h"
@@ -102,6 +103,8 @@ protected:
   RefPtr<Window> window_;
   HTML_View_Sidepanel side_panel_view;
   RefPtr<Overlay> side_panel;
+
+  HTML_View_RoomPanel room_panel_view;
   RefPtr<Overlay> room_panel;
 
   HTML_View_Login_Panel login_panel_view;

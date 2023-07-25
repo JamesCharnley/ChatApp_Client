@@ -34,6 +34,9 @@
     <ClCompile Include="..\src\HTML_View_Login_Panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\HTML_View_RoomPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\James\Documents\GitHub\ChatApp_Client\src\MyApp.h">
@@ -64,6 +67,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\HTML_View_Login_Panel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HTML_View_RoomPanel.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
